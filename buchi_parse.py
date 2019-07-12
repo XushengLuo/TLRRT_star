@@ -9,6 +9,7 @@ from networkx.classes.digraph import DiGraph
 from sympy import satisfiable
 from itertools import combinations
 
+
 class Buchi(object):
     """ construct buchi automaton graph
     """
@@ -137,10 +138,12 @@ class Buchi(object):
         delete infeasible accepting/final state
         """
         accept = self.buchi_graph.graph['accept']
+        self.buchi_graph.graph['accept'] = []
         for ac in accept:
-            # suppose only one initial state
-            if self.min_length[(self.buchi_graph.graph['init'][0], ac)] == np.inf or self.min_length[(ac, ac)] == np.inf:
-                self.buchi_graph.graph['accept'].remove(ac)
+            for init in self.buchi_graph.graph['init']:
+                if self.min_length[(init, ac)] < np.inf and self.min_length[(ac, ac)] < np.inf:
+                    self.buchi_graph.graph['accept'].append(ac)
+                    break
 
     def robot2region(self, symbol):
         """

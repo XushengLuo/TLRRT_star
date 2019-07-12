@@ -1,5 +1,6 @@
 from task import Task
 from buchi_parse import Buchi
+from workspace import Workspace
 
 task = Task()
 buchi = Buchi(task)

@@ -1,6 +1,25 @@
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, Point
 import pyvisgraph as vg
 import numpy as np
+from random import uniform
+
+
+def get_label(x, regions, obs):
+    """
+    generating the label of position state
+    """
+    point = Point(x)
+    # whether x lies within obstacle
+    for (obs, boundary) in iter(obs.items()):
+        if point.within(boundary):
+            return obs
+
+    # whether x lies within regions
+    for (region, boundary) in iter(regions.items()):
+        if point.within(boundary):
+            return region
+    # x lies within unlabeled region
+    return ''
 
 
 class Workspace(object):
@@ -11,7 +30,7 @@ class Workspace(object):
         # dimension of the workspace
         self.length = 1
         self.width = 1
-        self.workspace = (self.length, self.width)
+        self.dim = (self.length, self.width)
         # define regions (eg, isosceles right triangle)
         length_of_side = 0.2
         # coordinates of the right angle point
@@ -34,6 +53,20 @@ class Workspace(object):
         self.obs = {'o1': Polygon([(0.3, 0.0), (0.7, 0.0), (0.7, 0.2), (0.3, 0.2)]),
                     'o2': Polygon([(0.4, 0.7), (0.6, 0.7), (0.6, 1.0), (0.4, 1.0)])
                     }
+
+        self.number_of_robots = 1
+        # randomly generate initial locations of robots with empty atomic propositions
+        self.init = []
+        for i in range(self.number_of_robots):
+            while 1:
+                ini = [round(uniform(0, self.dim[i]), 3) for i in range(len(self.dim))]
+                ap = get_label(ini, self.regions, self.obs)
+                if 'l' not in ap and 'o' not in ap:
+                    break
+            self.init.append(tuple(ini))
+        self.init = tuple(self.init)
+        self.init_label = ['']*self.number_of_robots
+
 
     def shortest_path_between_regions(self):
         """
