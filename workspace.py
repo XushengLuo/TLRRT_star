@@ -30,7 +30,7 @@ class Workspace(object):
         # dimension of the workspace
         self.length = 1
         self.width = 1
-        self.dim = (self.length, self.width)
+        self.workspace = (self.length, self.width)
         # define regions (eg, isosceles right triangle)
         length_of_side = 0.2
         # coordinates of the right angle point

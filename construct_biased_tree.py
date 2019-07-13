@@ -6,47 +6,42 @@ def construction_tree(tree, n_max):
 
     for n in range(n_max):
         # biased sample
-        x_new, q_rand = tree.sample()
+        x_new, q_p_closest = tree.sample()
         # couldn't find x_new
         if not x_new:
             continue
 
-        x_new = tree.single2mulp(x_new)
         label = []
         flag = True
         for i in range(tree.robot):
             ap = tree.get_label(x_new[i])
-            # exists one sampled point lies within obstacles
-            if 'o' in ap:
-                flag = False
-                break
             if ap != '':
                 ap = ap + '_' + str(i+1)
             label.append(ap)
         if not flag:
             continue
-        # # near state
-        # near_v = tree.near(tree.mulp2sglp(x_new))
-        # # add q_rand
-        # if q_rand not in near_v:
-        #     near_v = near_v + [q_rand]
-        near_v = [q_rand]
-        # check obstacle free
-        obs_check = tree.obs_check(near_v, x_new, label, 'reg')
+        # near state
+        # near_nodes = tree.near(tree.mulp2single(x_new))
+        # if q_p_closest not in near_nodes:
+        #     near_nodes = near_nodes + [q_p_closest]
+        near_nodes = [q_p_closest]
 
+        # check the line is obstacle-free
+        obs_check = tree.obstacle_check(near_nodes, x_new, label)
+        # not obstacle-free
         if not list(obs_check.items())[0][1]:
             continue
+
         # iterate over each buchi state
         for b_state in tree.buchi.buchi_graph.nodes:
-
             # new product state
-            q_new = (x_new, b_state)
+            q_new = (tuple(x_new), b_state)
 
             # extend
-            final = tree.extend(q_new, near_v, label, obs_check) and final
+            final = tree.extend(q_new, near_nodes, label, obs_check) and final
             # rewire
             # if added == 1:
-                # tree.rewire(q_new, near_v, obs_check)
+            #     tree.rewire(q_new, near_v, obs_check)
 
         # first accepting state
         if len(tree.goals):
