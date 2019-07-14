@@ -13,21 +13,18 @@ def uniform_geometry(n):
     b = -p*numpy.log(p)/(1-p)
     for pdf in uniform_geometry_pdf(p, n):
         b += pdf
-        # print(sum)
     return b
 
 
 def uniform_geometry_cdf(n, b_max):
     p = 1/n
     b = -p * numpy.log(p) / (1 - p)
-    if b > b_max:
-        return 1
+    if b > b_max: return 1
     index = 1
     for pdf in uniform_geometry_pdf(p, n):
         b += pdf
         index += 1
-        if b > b_max:
-            return index
+        if b > b_max: return index
 
 
 def sample_uniform_geometry(group):

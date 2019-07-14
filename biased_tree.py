@@ -14,7 +14,7 @@ import math
 import numpy as np
 from collections import OrderedDict
 import pyvisgraph as vg
-from shapely.geometry import Point, Polygon, LineString
+from shapely.geometry import Point, LineString
 from uniform_geometry import sample_uniform_geometry
 from scipy.stats import truncnorm
 
@@ -82,6 +82,11 @@ class BiasedTree(object):
         self.g.build(polys, status=False)
 
     def trunc(self, value):
+        """
+
+        :param value:
+        :return:
+        """
         if value < 0:
             return 0
         elif value > 1:
@@ -89,7 +94,7 @@ class BiasedTree(object):
         else:
             return value
 
-    def sample(self):
+    def biased_sample(self):
         """
         sample point from the workspace
         :return: sampled point, tuple
@@ -165,19 +170,14 @@ class BiasedTree(object):
                             target = self.get_target(orig_x_rand, pair[0])
                             x_rand[robot_index] = self.gaussian_guided_towards_target(orig_x_rand, target)
                         else:
-                            x_rand_i = []
-                            for i in range(self.dim):
-                                x_rand_i.append(uniform(0, self.workspace[i]))
+                            x_rand_i = [uniform(0, self.workspace[i]) for i in range(self.dim)]
                             x_rand[robot_index] = tuple(x_rand_i)
                     else:
                         break
                     # sampled point lies within obstacles
-                    ap = self.get_label(x_rand[robot_index])
-                    if 'o' in ap:
-                        continue
+                    if 'o' in self.get_label(x_rand[robot_index]): continue
                     # collision avoidance
-                    if self.collision_avoidance(x_rand, robot_index):
-                        break
+                    if self.collision_avoidance(x_rand, robot_index): break
         return tuple(x_rand), q_p_closest
 
     def add_group(self, q_p):
@@ -249,12 +249,10 @@ class BiasedTree(object):
         :param target: target point
         :return: new point
         """
-        d = self.get_truncated_normal(0, 1/3, 0, np.inf)
+        d = self.get_truncated_normal(0, 1/3, 0, np.inf).rvs()
         # d = self.get_truncated_normal(np.linalg.norm(np.subtract(x, target)), 1/3/3, 0, np.inf)
-        d = d.rvs()
         angle = np.random.normal(0, np.pi/12/3/3, 1) + np.arctan2(target[1] - x[1], target[0] - x[0])
-        x_rand = np.add(x, np.append(d*np.cos(angle), d*np.sin(angle)))
-        x_rand = [self.trunc(x_rand_i) for x_rand_i in x_rand]
+        x_rand = [self.trunc(x_rand_i) for x_rand_i in np.add(x, np.append(d*np.cos(angle), d*np.sin(angle)))]
         return tuple(x_rand)
 
     def collision_avoidance(self, x, robot_index):
@@ -341,22 +339,21 @@ class BiasedTree(object):
                 self.goals.append(q_new)
         return added
 
-    def rewire(self, q_new, near_v, obs_check):
+    def rewire(self, q_new, near_nodes, obs_check):
         """
         :param: q_new: new state form: tuple (mul, buchi)
         :param: near_v: near state form: tuple (mul, buchi)
         :param: obs_check: check obstacle free form: dict { (mulp, mulp): True }
         :return: rewiring the tree
         """
-        for node in near_v:
-            if obs_check[(q_new[0], node[0])] and self.checkTranB(q_new[1], self.biased_tree.nodes[q_new]['label'], node[1]):
-                c = self.biased_tree.nodes[q_new]['cost'] + np.linalg.norm(np.subtract(self.mulp2sglp(q_new[0]), self.mulp2sglp(node[0])))      # without considering control
+        for node in near_nodes:
+            if obs_check[(q_new[0], node[0])] \
+                    and self.check_transition_b(q_new[1], self.biased_tree.nodes[q_new]['label'], node[1]):
+                c = self.biased_tree.nodes[q_new]['cost'] \
+                    + np.linalg.norm(np.subtract(self.mulp2single(q_new[0]), self.mulp2single(node[0])))
                 delta_c = self.biased_tree.nodes[node]['cost'] - c
                 # update the cost of node in the subtree rooted at node
                 if delta_c > 0:
-                    # self.biased_tree.nodes[node]['cost'] = c
-                    if not list(self.biased_tree.pred[node].keys()):
-                        print('empty')
                     self.biased_tree.remove_edge(list(self.biased_tree.pred[node].keys())[0], node)
                     self.biased_tree.add_edge(q_new, node)
                     edges = dfs_labeled_edges(self.biased_tree, source=node)
@@ -472,13 +469,12 @@ class BiasedTree(object):
         # all true propositions should be satisdied
         true_label = [true_label for true_label in truth.keys() if truth[true_label]]
         for label in true_label:
-            if label not in x_label:
-                return False
+            if label not in x_label: return False
+
         #  all fasle propositions should not be satisfied
         false_label = [false_label for false_label in truth.keys() if not truth[false_label]]
         for label in false_label:
-            if label in x_label:
-                return False
+            if label in x_label: return False
 
         return True
 
@@ -496,7 +492,6 @@ class BiasedTree(object):
             while s != self.init:
                 s = list(self.biased_tree.pred[s].keys())[0]
                 path.insert(0, s)
-
             paths[i] = [self.biased_tree.nodes[goal]['cost'], path]
         return paths
 
@@ -506,10 +501,7 @@ class BiasedTree(object):
         :param point: multiple points ((),(),(),...)
         :return: signle point ()
         """
-        sp = []
-        for p in point:
-            sp = sp + list(p)
-        return tuple(sp)
+        return tuple([p for r in point for p in r])
 
     def single2mulp(self, point):
         """
@@ -517,7 +509,5 @@ class BiasedTree(object):
         :param point: single form point ()
         :return:  multiple form point ((), (), (), ...)
         """
-        mp = []
-        for i in range(self.robot):
-            mp.append(point[i*self.dim:(i+1)*self.dim])
+        mp = [point[i*self.dim:(i+1)*self.dim] for i in range(self.robot)]
         return tuple(mp)

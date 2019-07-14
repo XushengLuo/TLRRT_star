@@ -3,7 +3,6 @@ import pyvisgraph as vg
 
 
 def construction_biased_tree(tree, n_max):
-    final = True
     # trivial suffix path
     if tree.segment == 'suffix' and tree.check_transition_b(tree.init[1], tree.biased_tree.nodes[tree.init]['label'],
                                                             tree.init[1]):
@@ -12,46 +11,40 @@ def construction_biased_tree(tree, n_max):
 
     for n in range(n_max):
         # biased sample
-        x_new, q_p_closest = tree.sample()
+        x_new, q_p_closest = tree.biased_sample()
         # couldn't find x_new
-        if not x_new:
-            continue
+        if not x_new: continue
 
         label = []
         for i in range(tree.robot):
             ap = tree.get_label(x_new[i])
-            if ap != '':
-                ap = ap + '_' + str(i+1)
+            ap = ap + '_' + str(i+1) if ap != '' else ap
             label.append(ap)
         # near state
         # near_nodes = tree.near(tree.mulp2single(x_new))
-        # if q_p_closest not in near_nodes:
-        #     near_nodes = near_nodes + [q_p_closest]
+        # near_nodes = near_nodes + [q_p_closest] if q_p_closest not in near_nodes else near_nodes
+        # avoid near
         near_nodes = [q_p_closest]
 
         # check the line is obstacle-free
         obs_check = tree.obstacle_check(near_nodes, x_new, label)
         # not obstacle-free
-        if not list(obs_check.items())[0][1]:
-            continue
+        if not list(obs_check.items())[0][1]: continue
 
         # iterate over each buchi state
         for b_state in tree.buchi.buchi_graph.nodes:
             # new product state
             q_new = (x_new, b_state)
             # extend
-            added = tree.extend(q_new, near_nodes, label, obs_check) and final
+            added = tree.extend(q_new, near_nodes, label, obs_check)
             # rewire
-            if added == 1:
-                pass
-            #     tree.rewire(q_new, near_v, obs_check)
+            # if added == 1:
+            #     tree.rewire(q_new, near_nodes, obs_check)
 
         # first accepting state
-        if len(tree.goals)>2:
-            break
+        if len(tree.goals) > 0: break
 
-    cost_path = tree.find_path(tree.goals)
-    return cost_path
+    return tree.find_path(tree.goals)
 
 
 def path_via_visibility(tree, path):
@@ -68,10 +61,8 @@ def path_via_visibility(tree, path):
     # append to the same length
     for i in range(tree.robot):
         paths[i] = paths[i] + [paths[i][-1]]*(max_len-len(paths[i]))
-    # one path of product state
-    path_free = []
-    for i in range(max_len):
-        path_free.append((tuple([p[i] for p in paths]), ''))  # second component serves as buchi state
+    # combine to one path of product state
+    path_free = [(tuple([p[i] for p in paths]), '') for i in range(max_len)]  # second component serves as buchi state
     # calculate cost
     cost = 0
     for i in range(1, max_len):
