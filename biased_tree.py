@@ -16,13 +16,14 @@ from collections import OrderedDict
 import pyvisgraph as vg
 from shapely.geometry import Point, Polygon, LineString
 from uniform_geometry import sample_uniform_geometry
+from scipy.stats import truncnorm
 
 
-class biased_tree(object):
+class BiasedTree(object):
     """
     construction of prefix and suffix trees
     """
-    def __init__(self, workspace, buchi, init_b, step_size, segment):
+    def __init__(self, workspace, buchi, init_state, init_label, step_size, segment):
         """
         :param acpt:  accepting state
         :param ts: transition system
@@ -34,15 +35,15 @@ class biased_tree(object):
         self.dim = len(self.workspace)
         self.regions = workspace.regions
         self.obstacles = workspace.obs
-        self.robot = workspace.number_of_robots
+        self.robot = buchi.number_of_robots
         # parameters regarding task
         self.buchi = buchi
         self.accept = self.buchi.buchi_graph.graph['accept']
-        self.init = (workspace.init, init_b)
+        self.init = init_state
         
         # initlizing the tree
         self.biased_tree = DiGraph(type='PBA', init=self.init)
-        self.biased_tree.add_node(self.init, cost=0, label=workspace.init_label)
+        self.biased_tree.add_node(self.init, cost=0, label=init_label)
         
         # parameters regarding TL-RRT* algorithm
         self.goals = []
@@ -55,6 +56,7 @@ class biased_tree(object):
         # group the nodes in the tree by the buchi state
         self.group = dict()
         self.add_group(self.init)
+
         # select final buchi states
         if self.segment == 'prefix':
             self.b_final = self.buchi.buchi_graph.graph['accept'][0]
@@ -64,6 +66,7 @@ class biased_tree(object):
         self.b_min = set()
         self.q_min2final = []
         self.not_q_min2final = []
+        self.update_min_dis2final_and_partition(self.init)
 
         # probability
         self.p_closest = 0.9
@@ -78,8 +81,13 @@ class biased_tree(object):
         self.g = vg.VisGraph()
         self.g.build(polys, status=False)
 
-        # biased sampling
-        # self.acp = np.random.randint(0, len(buchi_graph.graph['accept']))
+    def trunc(self, value):
+        if value < 0:
+            return 0
+        elif value > 1:
+            return 1
+        else:
+            return value
 
     def sample(self):
         """
@@ -152,7 +160,7 @@ class biased_tree(object):
                 while True:
                     x_rand[robot_index] = orig_x_rand  # recover
                     # move towards target position
-                    if key not in x_label:
+                    if truth[key] and key not in x_label:
                         if np.random.uniform(0, 1, 1) <= self.y_rand:
                             target = self.get_target(orig_x_rand, pair[0])
                             x_rand[robot_index] = self.gaussian_guided_towards_target(orig_x_rand, target)
@@ -161,7 +169,8 @@ class biased_tree(object):
                             for i in range(self.dim):
                                 x_rand_i.append(uniform(0, self.workspace[i]))
                             x_rand[robot_index] = tuple(x_rand_i)
-
+                    else:
+                        break
                     # sampled point lies within obstacles
                     ap = self.get_label(x_rand[robot_index])
                     if 'o' in ap:
@@ -169,7 +178,7 @@ class biased_tree(object):
                     # collision avoidance
                     if self.collision_avoidance(x_rand, robot_index):
                         break
-        return x_rand, q_p_closest
+        return tuple(x_rand), q_p_closest
 
     def add_group(self, q_p):
         """
@@ -229,6 +238,10 @@ class biased_tree(object):
         shortest = self.g.shortest_path(vg.Point(init[0], init[1]), vg.Point(tg[0], tg[1]))
         return shortest[1].x, shortest[1].y
 
+    def get_truncated_normal(self, mean=0, sd=1, low=0, upp=10):
+        return truncnorm(
+            (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
+
     def gaussian_guided_towards_target(self, x, target):
         """
         calculate new point following gaussian dist guided by the target
@@ -236,11 +249,11 @@ class biased_tree(object):
         :param target: target point
         :return: new point
         """
-        # d = self.get_truncated_normal(0, 1/3, 0, np.inf)
-        # d = d.rvs() + np.linalg.norm(np.subtract(x, target))
-        d = np.random.normal(np.linalg.norm(np.subtract(x, target)), 1/3/3)
+        d = self.get_truncated_normal(0, 1/3, 0, np.inf)
+        # d = self.get_truncated_normal(np.linalg.norm(np.subtract(x, target)), 1/3/3, 0, np.inf)
+        d = d.rvs()
         angle = np.random.normal(0, np.pi/12/3/3, 1) + np.arctan2(target[1] - x[1], target[0] - x[0])
-        x_rand = np.add(x, (d*np.cos(angle), d*np.sin(angle)))
+        x_rand = np.add(x, np.append(d*np.cos(angle), d*np.sin(angle)))
         x_rand = [self.trunc(x_rand_i) for x_rand_i in x_rand]
         return tuple(x_rand)
 
@@ -264,17 +277,16 @@ class biased_tree(object):
         :return: nearest class of vertices form: single point ()
         """
         min_dis = math.inf
-        q_nearest = []
-        for vertex in self.biased_tree.nodes:
-            x_vertex = self.mulp2sglp(vertex[0])
-            dis = np.linalg.norm(np.subtract(x_rand, x_vertex))
+        q_p_nearest = []
+        for node in self.biased_tree.nodes:
+            x = self.mulp2single(node[0])
+            dis = np.linalg.norm(np.subtract(x_rand, x))
             if dis < min_dis:
-                q_nearest = list()
-                q_nearest.append(vertex)
+                q_p_nearest = [node]
                 min_dis = dis
             elif dis == min_dis:
-                q_nearest.append(vertex)
-        return q_nearest
+                q_p_nearest.append(node)
+        return q_p_nearest
 
     def steer(self, x_rand, x_nearest):
         """
@@ -286,7 +298,8 @@ class biased_tree(object):
         if np.linalg.norm(np.subtract(x_rand, x_nearest)) <= self.step_size:
             return x_rand
         else:
-            return tuple(np.asarray(x_nearest) + self.step_size * (np.subtract(x_rand, x_nearest))/np.linalg.norm(np.subtract(x_rand, x_nearest)))
+            return tuple(np.asarray(x_nearest) + self.step_size * (np.subtract(x_rand, x_nearest))/
+                         np.linalg.norm(np.subtract(x_rand, x_nearest)))
 
     def extend(self, q_new, near_nodes, label, obs_check):
         """
@@ -324,14 +337,9 @@ class biased_tree(object):
                 self.add_group(q_n)
                 self.update_min_dis2final_and_partition(q_n)
                 self.goals.append(q_n)
-            if self.segment == 'suf' and self.obstacle_check([self.init], q_new[0], label)[(q_new[0], self.init[0])] \
-                    and self.check_transition_b(q_new[1], label, self.init[1]):
+            if self.segment == 'suffix' and self.init[1] == q_new[1]:
                 self.goals.append(q_new)
-            # same buchi state but untransitionable x
-            if self.segment == 'suf' and self.init[1] == q_new[1]:
-                self.goals.append(q_new)
-                return False
-        return True
+        return added
 
     def rewire(self, q_new, near_v, obs_check):
         """
@@ -422,12 +430,12 @@ class biased_tree(object):
         """
         point = Point(x)
         # whether x lies within obstacle
-        for (obs, boundary) in iter(self.ts['obs'].items()):
+        for (obs, boundary) in iter(self.obstacles.items()):
             if point.within(boundary):
                 return obs
 
         # whether x lies within regions
-        for (region, boundary) in iter(self.ts['region'].items()):
+        for (region, boundary) in iter(self.regions.items()):
             if point.within(boundary):
                 return region
         # x lies within unlabeled region
@@ -474,7 +482,7 @@ class biased_tree(object):
 
         return True
 
-    def findpath(self, goals):
+    def find_path(self, goals):
         """
         find the path backwards
         :param goal: goal state
@@ -487,15 +495,9 @@ class biased_tree(object):
             s = goal
             while s != self.init:
                 s = list(self.biased_tree.pred[s].keys())[0]
-                if s == path[0]:
-                    print("loop")
                 path.insert(0, s)
 
-            if self.segment == 'pre':
-                paths[i] = [self.biased_tree.nodes[goal]['cost'], path]
-            elif self.segment == 'suf':
-                # path.append(self.init)
-                paths[i] = [self.biased_tree.nodes[goal]['cost'] + np.linalg.norm(np.subtract(goal[0], self.init[0])), path]
+            paths[i] = [self.biased_tree.nodes[goal]['cost'], path]
         return paths
 
     def mulp2single(self, point):

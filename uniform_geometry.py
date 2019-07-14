@@ -2,7 +2,6 @@ import numpy
 
 
 def uniform_geometry_pdf(p, x):
-
     a = -p*numpy.log(p)/(1-p)
     for i in range(1, x):
         a -= p*numpy.power(1-p, i-1)/i
@@ -34,8 +33,8 @@ def uniform_geometry_cdf(n, b_max):
 def sample_uniform_geometry(group):
     if len(group) == 1:
         return group[0]
-    reverseGroup = group[::-1]
-    n = len(reverseGroup)
+    reversed_group = group[::-1]
+    n = len(reversed_group)
     b = uniform_geometry(n)
     cdf = numpy.random.uniform(0, b, 1)[0]
-    return reverseGroup[uniform_geometry_cdf(n, cdf)-1]
+    return reversed_group[uniform_geometry_cdf(n, cdf)-1]

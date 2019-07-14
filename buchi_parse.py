@@ -18,7 +18,6 @@ class Buchi(object):
         # task specified in LTL
         self.formula = task.formula
         self.subformula = task.subformula
-        self.exclusion = task.exclusion
         self.number_of_robots = task.number_of_robots
         # graph of buchi automaton
         """
@@ -73,6 +72,10 @@ class Buchi(object):
                         continue
                     # add edge
                     self.buchi_graph.add_edge(state, next_state, truth=truth_table)
+            else:
+                state_skip = re.findall(state + r':\n\tskip\n', output, re.DOTALL)
+                if state_skip:
+                    self.buchi_graph.add_edge(state, state, truth='1')
 
     def get_truth_assignment(self, symbol):
         """

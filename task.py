@@ -1,3 +1,7 @@
+from workspace import Workspace, get_label
+from random import uniform
+
+
 class Task(object):
     """
     define the task specified in LTL
@@ -24,29 +28,47 @@ class Task(object):
         |       X   (next)           |
         +----------------------------+
         """
+        workspace = Workspace()
+        self.number_of_robots = 4
+        # randomly generate initial locations of robots with empty atomic propositions
+        self.init = []
+        for i in range(self.number_of_robots):
+            while True:
+                ini = [round(uniform(0, workspace.workspace[k]), 3) for k in range(len(workspace.workspace))]
+                ap = get_label(ini, workspace.regions, workspace.obs)
+                if 'l' not in ap and 'o' not in ap:
+                    break
+            self.init.append(tuple(ini))
+        self.init = tuple(self.init)
+        self.init_label = [''] * self.number_of_robots
+
         # Task 1
-        self.number_of_robots = 1
         # task specification, e1-e5 are subfomulas
-        self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
-
-        self.subformula = {1: '(l4_1)',
-                           2: '(l3_1)',
-                           3: '(l1_1)',
-                           4: '(l2_1)',
-                           5: '(l5_1)',
-                           }
-        self.exclusion = [('e1', 'e2'), ('e1', 'e3'), ('e1', 'e3'), ('e1', 'e4'), ('e1', 'e5'), ('e2', 'e3'),
-                          ('e2', 'e4'), ('e2', 'e5'), ('e3', 'e4'), ('e3', 'e5'), ('e4', 'e5')]
+        # self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
+        #
+        # self.subformula = {1: '(l1_1)',
+        #                    2: '(l2_1)',
+        #                    3: '(l3_1)',
+        #                    4: '(l4_1)',
+        #                    5: '(l5_1)',
+        #                    }
 
         # Task 1
-        self.number_of_robots = 2
         # task specification, e1-e5 are subfomulas
-        self.formula = '[]<> e1 && []<> e2 && []<> e3'
-
-        self.subformula = {1: '(l4_1)',
-                           2: '(l3_2)',
-                           3: '(l3_1)'
-                        }
+        # self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
+        #
+        # self.subformula = {1: '(l1_1)',
+        #                    2: '(l6_1)',
+        #                    3: '(l5_2)'
+        #                 }
+        self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6))'
+        self.subformula = {
+            1: '(l1_1 && l1_2)',
+            2: '(l2_2 && l2_3)',
+            3: '(l3_3 && l3_4)',
+            4: '(l4_1)',
+            5: '(l5_4)',
+            6: '(l6_3)'}
 
         # Task 2
         # self.number_of_robots = 40
