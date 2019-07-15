@@ -69,16 +69,15 @@ def path_plot(path, workspace, number_of_robots):
 
 def path_print(path, workspace, number_of_robots):
     """
-    plot the path
+    print the path
     :param path: found path
     :param workspace: workspace
     :param number_of_robots:
-    :return: figure
+    :return: printed path of traversed regions. points with empty label are depicted as dots
     """
-
     for n in range(number_of_robots):
         print('robot {0}: '.format(n+1), end='')
-        # prefix path
+        # prefix path, a path of x's or y's of a robot
         x_pre = [point[0][n][0] for point in path[0]]
         y_pre = [point[0][n][1] for point in path[0]]
         path_print_helper(x_pre, y_pre, workspace)
@@ -90,6 +89,13 @@ def path_print(path, workspace, number_of_robots):
 
 
 def path_print_helper(x, y, workspace):
+    """
+    help to print the path
+    :param x: a path of x's of a robot throughout the run
+    :param y: a path of y's of a robot throughout the run
+    :param workspace: workspace
+    :return: printed path of traversed regions. points with empty label are depicted as dots
+    """
     for i in range(len(x)):
         label = get_label((x[i], y[i]), workspace)
         label = ' .' if not label else label

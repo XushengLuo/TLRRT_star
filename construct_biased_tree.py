@@ -22,7 +22,7 @@ def construction_biased_tree(tree, n_max):
         x_new, q_p_closest = tree.biased_sample()
         # couldn't find x_new
         if not x_new: continue
-
+        # label of x_new
         label = []
         for i in range(tree.robot):
             ap = tree.get_label(x_new[i])

@@ -63,7 +63,7 @@ class Buchi(object):
                 relation_group = re.findall(r':: (\(.*?\)) -> goto (\w+)\n\t', state_if_fi[0])
                 for symbol, next_state in relation_group:
                     # delete edges with multiple labels
-                    if ' && ' in symbol: continue
+                    # if ' && ' in symbol: continue
                     # whether the edge is feasible in terms of atomic propositions
                     for k in order_key:
                         symbol = symbol.replace('e{0}'.format(k), self.subformula[k])
