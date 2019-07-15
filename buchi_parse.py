@@ -11,32 +11,32 @@ from itertools import combinations
 
 
 class Buchi(object):
-    """ construct buchi automaton graph
+    """
+    construct buchi automaton graph
     """
 
     def __init__(self, task):
+        """
+        initialization
+        :param task: task specified in LTL
+        """
         # task specified in LTL
         self.formula = task.formula
         self.subformula = task.subformula
         self.number_of_robots = task.number_of_robots
         # graph of buchi automaton
-        """
-        Format:
-            buchi_graph.node = NodeView(('T0_init', 'T1_S1', 'accept_S1'))
-            buchi_graph.edges = OutEdgeView([('T0_init', 'T0_init'), ('T0_init', 'T1_S1'),....])
-            buchi_graph.succ = AdjacencyView({'T0_init': {'T0_init': {'label': '1'}, 'T1_S1': {'label': 'r3'}}})
-        """
         self.buchi_graph = DiGraph(type='buchi', init=[], accept=[])
 
         # minimal length (in terms of number of transitions) between a pair of nodes
         self.min_length = dict()
                 
     def construct_buchi_graph(self):
-        """parse the output of the program ltl2ba and build the buchi automaton
         """
-        # directory of the ltl2ba
+        parse the output of the program ltl2ba and build the buchi automaton
+        """
+        # directory of the program ltl2ba
         dirname = os.path.dirname(__file__)
-        # output string of program ltl2ba
+        # output of the program ltl2ba
         output = subprocess.check_output(dirname + "/./ltl2ba -f \"" + self.formula + "\"", shell=True).decode(
             "utf-8")
         
@@ -62,14 +62,15 @@ class Buchi(object):
             if state_if_fi:
                 relation_group = re.findall(r':: (\(.*?\)) -> goto (\w+)\n\t', state_if_fi[0])
                 for symbol, next_state in relation_group:
+                    # delete edges with multiple labels
+                    if ' && ' in symbol: continue
                     # whether the edge is feasible in terms of atomic propositions
                     for k in order_key:
                         symbol = symbol.replace('e{0}'.format(k), self.subformula[k])
                     # get the trurh assignment
                     truth_table = self.get_truth_assignment(symbol)
                     # infeasible transition
-                    if not truth_table:
-                        continue
+                    if not truth_table: continue
                     # add edge
                     self.buchi_graph.add_edge(state, next_state, truth=truth_table)
             else:
@@ -79,22 +80,26 @@ class Buchi(object):
 
     def get_truth_assignment(self, symbol):
         """
-            get one set of truth assignment that makes the symbol true
+        get one set of truth assignment that makes the symbol true
+        :param symbol: logical expression which controls the transition
+        :return: a set of truth assignment enables the symbol
         """
+        # empty symbol
+        if symbol == '(1)':
+            return '1'
         # non-empty symbol
-        if symbol != '(1)':
+        else:
             exp = symbol.replace('||', '|').replace('&&', '&').replace('!', '~')
             # add extra constraints: a single robot can reside in at most one region
             robot_region = self.robot2region(exp)
             for robot, region in robot_region.items():
-                mutual_exclution = list(combinations(region, 2))
+                mutual_execlusion = list(combinations(region, 2))
                 # single label in the symbol
-                if not mutual_exclution:
-                    continue
-                for i in range(len(mutual_exclution)):
-                    mutual_exclution[i] = '(~(' + ' & '.join(list(mutual_exclution[i])) + '))'
-                exp = exp + '&' + ' & '.join(mutual_exclution)
-            # find one truth assignment that makes symbol true
+                if not mutual_execlusion: continue
+                for i in range(len(mutual_execlusion)):
+                    mutual_execlusion[i] = '(~(' + ' & '.join(list(mutual_execlusion[i])) + '))'
+                exp = exp + '&' + ' & '.join(mutual_execlusion)
+            # find one truth assignment that makes symbol true using function satisfiable
             truth = satisfiable(exp, algorithm="dpll")
             try:
                 truth_table = dict()
@@ -104,41 +109,42 @@ class Buchi(object):
                 return False
             else:
                 return truth_table
-        # empty symbol
-        else:
-            return '1'
-    
+
     def get_minimal_length(self):
         """
-        search the shorest path from a node to another, weight = 1, i.e. # of state in the path
+        search the shortest path from a node to another, i.e., # of transitions in the path
+        :return: 
         """
-
         # loop over pairs of buchi states
-        for node1 in self.buchi_graph.nodes():
-            for node2 in self.buchi_graph.nodes():
-                # node1 = node2, and node2 is an accepting state
-                if node1 != node2 and 'accept' in node2:
+        for head_node in self.buchi_graph.nodes():
+            for tail_node in self.buchi_graph.nodes():
+                # head_node = tail_node, and tail_node is an accepting state
+                if head_node != tail_node and 'accept' in tail_node:
                     try:
-                        length, _ = nx.algorithms.single_source_dijkstra(self.buchi_graph, source=node1, target=node2)
+                        length, _ = nx.algorithms.single_source_dijkstra(self.buchi_graph,
+                                                                         source=head_node, target=tail_node)
+                    # couldn't find a path from head_node to tail_node
                     except nx.exception.NetworkXNoPath:
                         length = np.inf
-                    self.min_length[(node1, node2)] = length
-                # node1 != node2 and node 2 is an accepting state
-                # move 1 step forward to all reachable states of node1 then calculate the minimal length
-                elif node1 == node2 and 'accept' in node2:
+                    self.min_length[(head_node, tail_node)] = length
+                # head_node != tail_node and tail_node is an accepting state
+                # move 1 step forward to all reachable states of head_node then calculate the minimal length
+                elif head_node == tail_node and 'accept' in tail_node:
                     length = np.inf
-                    for suc in self.buchi_graph.succ[node1]:
+                    for suc in self.buchi_graph.succ[head_node]:
                         try:
-                            len0, _ = nx.algorithms.single_source_dijkstra(self.buchi_graph, source=suc, target=node1)
+                            len1, _ = nx.algorithms.single_source_dijkstra(self.buchi_graph,
+                                                                           source=suc, target=tail_node)
                         except nx.exception.NetworkXNoPath:
-                            len0 = np.inf
-                        if len0 < length:
-                            length = len0 + 1
-                    self.min_length[(node1, node2)] = length
+                            len1 = np.inf
+                        if len1 < length:
+                            length = len1 + 1
+                    self.min_length[(head_node, tail_node)] = length
 
     def get_feasible_accepting_state(self):
         """
-        delete infeasible accepting/final state
+        get feasbile accepting/final state, or check whether an accepting state is feaasible
+        :return:
         """
         accept = self.buchi_graph.graph['accept']
         self.buchi_graph.graph['accept'] = []
@@ -152,10 +158,9 @@ class Buchi(object):
         """
         pair of robot and corresponding regions in the expression
         :param symbol: logical expression
-        :param robot: # of robots
-        :return: dic of robot index : regions
-        exp = 'l1_1 & l3_1 & l4_1 & l4_6 | l3_4 & l5_6'
-        {1: ['l1_1', 'l3_1', 'l4_1'], 4: ['l3_4'], 6: ['l4_6', 'l5_6']}
+        :return: robot index : regions
+        eg: input:  exp = 'l1_1 & l3_1 & l4_1 & l4_6 | l3_4 & l5_6'
+            output: {1: ['l1_1', 'l3_1', 'l4_1'], 4: ['l3_4'], 6: ['l4_6', 'l5_6']}
         """
 
         robot_region = dict()

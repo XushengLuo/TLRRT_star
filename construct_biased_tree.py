@@ -1,9 +1,17 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import pyvisgraph as vg
 
 
 def construction_biased_tree(tree, n_max):
-    # trivial suffix path
+    """
+    construction of the biased tree
+    :param tree: biased tree
+    :param n_max: maximum number of iterations
+    :return: found path
+    """
+    # trivial suffix path, the initial state can transition to itself
     if tree.segment == 'suffix' and tree.check_transition_b(tree.init[1], tree.biased_tree.nodes[tree.init]['label'],
                                                             tree.init[1]):
         tree.goals.append(tree.init)
@@ -21,15 +29,17 @@ def construction_biased_tree(tree, n_max):
             ap = ap + '_' + str(i+1) if ap != '' else ap
             label.append(ap)
         # near state
-        # near_nodes = tree.near(tree.mulp2single(x_new))
-        # near_nodes = near_nodes + [q_p_closest] if q_p_closest not in near_nodes else near_nodes
-        # avoid near
-        near_nodes = [q_p_closest]
+        if tree.lite:
+            # avoid near
+            near_nodes = [q_p_closest]
+        else:
+            near_nodes = tree.near(tree.mulp2single(x_new))
+            near_nodes = near_nodes + [q_p_closest] if q_p_closest not in near_nodes else near_nodes
 
         # check the line is obstacle-free
         obs_check = tree.obstacle_check(near_nodes, x_new, label)
         # not obstacle-free
-        if not list(obs_check.items())[0][1]: continue
+        if tree.lite and not list(obs_check.items())[0][1]: continue
 
         # iterate over each buchi state
         for b_state in tree.buchi.buchi_graph.nodes:
@@ -38,8 +48,8 @@ def construction_biased_tree(tree, n_max):
             # extend
             added = tree.extend(q_new, near_nodes, label, obs_check)
             # rewire
-            # if added == 1:
-            #     tree.rewire(q_new, near_nodes, obs_check)
+            if not tree.lite and added:
+                tree.rewire(q_new, near_nodes, obs_check)
 
         # first accepting state
         if len(tree.goals) > 0: break
@@ -48,10 +58,15 @@ def construction_biased_tree(tree, n_max):
 
 
 def path_via_visibility(tree, path):
-
+    """
+    using the visibility graph to find the shortest path
+    :param tree: biased tree
+    :param path: path found by the first step of the suffix part
+    :return: a path in the free workspace (after treating all regions as obstacles) and its distance cost
+    """
     paths = []
     max_len = 0
-    # find a path for each robot
+    # find a path for each robot using visibility graph method
     for i in range(tree.robot):
         init = path[-1][0][i]
         goal = path[0][0][i]

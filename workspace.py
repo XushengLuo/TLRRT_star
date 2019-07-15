@@ -1,18 +1,20 @@
+# -*- coding: utf-8 -*-
+
 from shapely.geometry import Polygon, Point
 
 
-def get_label(x, regions, obs):
+def get_label(x, workspace):
     """
-    generating the label of position state
+    generating the label of position component
     """
     point = Point(x)
     # whether x lies within obstacle
-    for (obs, boundary) in iter(obs.items()):
+    for (obs, boundary) in iter(workspace.obs.items()):
         if point.within(boundary):
             return obs
 
     # whether x lies within regions
-    for (region, boundary) in iter(regions.items()):
+    for (region, boundary) in iter(workspace.regions.items()):
         if point.within(boundary):
             return region
     # x lies within unlabeled region
@@ -50,4 +52,3 @@ class Workspace(object):
         self.obs = {'o1': Polygon([(0.3, 0.0), (0.7, 0.0), (0.7, 0.2), (0.3, 0.2)]),
                     'o2': Polygon([(0.4, 0.7), (0.6, 0.7), (0.6, 1.0), (0.4, 1.0)])
                     }
-

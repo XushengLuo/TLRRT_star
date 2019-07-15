@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from task import Task
 from buchi_parse import Buchi
 from workspace import Workspace
@@ -6,25 +8,33 @@ from collections import OrderedDict
 import numpy as np
 from biased_tree import BiasedTree
 from construct_biased_tree import construction_biased_tree, path_via_visibility
-from draw_picture import path_plot
+from draw_picture import path_plot, path_print
 import matplotlib.pyplot as plt
 import pyvisgraph as vg
 
-
+# task
 task = Task()
 buchi = Buchi(task)
 buchi.construct_buchi_graph()
 buchi.get_minimal_length()
 buchi.get_feasible_accepting_state()
 buchi_graph = buchi.buchi_graph
-# print(buchi_graph.number_of_nodes(), buchi_graph.number_of_edges())
-# for edge in buchi_graph.edges():
-#     print(edge, buchi_graph.edges[edge]['truth'])
-
+# workspace
 workspace = Workspace()
 
 n_max = 40000
-step_size = 0.25*buchi.number_of_robots
+para = dict()
+# lite version, excluding extending and rewiring
+para['is_lite'] = True
+# step_size used in function near
+para['step_size'] = 0.25 * buchi.number_of_robots
+# probability
+para['p_closest'] = 0.9
+# target point
+para['y_rand'] = 0.99
+# threshold for collision avoidance
+para['threshold'] = 0.005
+
 cost_path = OrderedDict()
 
 start = datetime.datetime.now()
@@ -41,7 +51,7 @@ for b_init in buchi_graph.graph['init']:
     """
     init_state = (task.init, b_init)
     init_label = task.init_label
-    tree_pre = BiasedTree(workspace, buchi, init_state, init_label, step_size, 'prefix')
+    tree_pre = BiasedTree(workspace, buchi, init_state, init_label, 'prefix', para)
     print('--------------prefix path---------------------')
     # prefix path with cost
     cost_path_pre = construction_biased_tree(tree_pre, n_max)
@@ -58,6 +68,14 @@ for b_init in buchi_graph.graph['init']:
      |                Suffix Path                   |
      #----------------------------------------------#
     """
+    # treat all regions as obstacles
+    polys_suf = []
+    for poly in workspace.obs.values():
+        polys_suf.append([vg.Point(x[0], x[1]) for x in list(poly.exterior.coords)[:-1]])
+
+    for poly in workspace.regions.values():
+        polys_suf.append([vg.Point(x[0], x[1]) for x in list(poly.exterior.coords)[:-1]])
+
     start = datetime.datetime.now()
     # # each initial state <=> multiple accepting states
     for i in range(len(tree_pre.goals)):
@@ -66,7 +84,7 @@ for b_init in buchi_graph.graph['init']:
         init_state = tree_pre.goals[i]
         init_label = tree_pre.biased_tree.nodes[init_state]['label']
         buchi_graph.graph['accept'] = init_state[1]
-        tree_suf = BiasedTree(workspace, buchi, init_state, init_label, step_size, 'suffix')
+        tree_suf = BiasedTree(workspace, buchi, init_state, init_label, 'suffix', para)
         # update accepting buchi state
 
         # construct suffix tree
@@ -83,17 +101,8 @@ for b_init in buchi_graph.graph['init']:
         # not trivial suffix path
         if cost_path_suf_cand[0][1]:
             # find the remaining path to close the loop
-            # treat all regions as obstacles
-            polys = []
-            for poly in tree_suf.obstacles.values():
-                polys.append([vg.Point(x[0], x[1]) for x in list(poly.exterior.coords)[:-1]])
-
-            for poly in tree_suf.regions.values():
-                polys.append([vg.Point(x[0], x[1]) for x in list(poly.exterior.coords)[:-1]])
-
             tree_suf.g = vg.VisGraph()
-            tree_suf.g.build(polys, status=False)
-
+            tree_suf.g.build(polys_suf, status=False)
             for k in range(len(cost_path_suf_cand)):
                 cost, path_free = path_via_visibility(tree_suf, cost_path_suf_cand[k][1])
                 cost_path_suf_cand[k][0] += cost
@@ -121,5 +130,6 @@ for b_init in buchi_graph.graph['init']:
     print('Time to find the surfix path: {0}'.format(suf_time))
     print(pre_time, suf_time, opt_cost[0], opt_cost[1], pre_time + suf_time,
           (opt_cost[0] + opt_cost[1])/2)
-    path_plot((opt_path_pre, opt_path_suf), workspace, buchi.number_of_robots)
-    plt.show()
+    # path_plot((opt_path_pre, opt_path_suf), workspace, buchi.number_of_robots)
+    path_print((opt_path_pre, opt_path_suf), workspace, buchi.number_of_robots)
+    # plt.show()
