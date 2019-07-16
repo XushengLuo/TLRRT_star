@@ -36,23 +36,33 @@ robot is printed onto the screen when the number of robots is large.
 # Example
 
 ## Workspace
-The workspace of size `1X1` is shown below, with `l_1`~`l_6` being regions and `o_1`~`o_2` being obstacles
+The workspace of size `1-by-1` is shown below, with `l_1`~`l_6` being regions and `o_1`~`o_2` being obstacles
 ![](workspace.png)
 
 ## Case 1
 ```python
-self.formula = '<> e1 && <> e2  && <> e3 && <> e4 && <> e5 && <> e6'
-self.subformula = {1: '(l1_1)',
-                           2: '(l2_1)',
-                           3: '(l3_1)',
-                           4: '(l4_1)',
-                           5: '(l5_1)',
-                           6: '(l6_1)'
-                           }                        
+self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
+self.subformula = { 1: '(l1_1)',
+                    2: '(l2_1)',
+                    3: '(l3_1)',
+                    4: '(l4_1)',
+                    5: '(l5_1)',
+                    }                     
 ```
 ## Case 2
-
+```python
+self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
+self.subformula = { 1: '(l1_1)',
+                    2: '(l6_1)',
+                    3: '(l5_2)'
+                    }
+```
 ## Case 3
-
-
+```python
+self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
+```
+It presents high performance when the following code in [buchi_parse.py](buchi_parse.py) is uncommented.
+```python
+if ' && ' in symbol: continue
+```
 
