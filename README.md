@@ -36,7 +36,7 @@ robot is printed onto the screen when the number of robots is large.
 # Example
 
 ## Workspace
-The workspace of size `1-by-1` is shown below, with `l_1`~`l_6` being regions and `o_1`~`o_2` being obstacles
+The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions and `o_1`-`o_2` being obstacles
 ![](workspace.png)
 
 ## Case 1
