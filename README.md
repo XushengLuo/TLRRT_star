@@ -36,6 +36,23 @@ robot is printed onto the screen when the number of robots is large.
 # Example
 
 ## Workspace
+The workspace of size `1X1` is shown below, with `l_1`~`l_6` being regions and `o_1`~`o_2` being obstacles
 ![](workspace.png)
+
+## Case 1
+```python
+self.formula = '<> e1 && <> e2  && <> e3 && <> e4 && <> e5 && <> e6'
+self.subformula = {1: '(l1_1)',
+                           2: '(l2_1)',
+                           3: '(l3_1)',
+                           4: '(l4_1)',
+                           5: '(l5_1)',
+                           6: '(l6_1)'
+                           }                        
+```
+## Case 2
+
+## Case 3
+
 
 
