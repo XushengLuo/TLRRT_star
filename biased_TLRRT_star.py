@@ -40,7 +40,7 @@ para['p_closest'] = 0.9
 # target point
 para['y_rand'] = 0.99
 # threshold for collision avoidance
-para['threshold'] = 0.005
+para['threshold'] = task.threshold
 
 cost_path = OrderedDict()
 

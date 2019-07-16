@@ -104,3 +104,4 @@ class Task(object):
             ap = ap + '_' + str(i + 1) if 'l' in ap else ''
             self.init_label.append(ap)
         self.init = tuple(self.init)
+        self.threshold = 0.005
