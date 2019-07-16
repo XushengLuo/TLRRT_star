@@ -35,6 +35,7 @@ robot is printed onto the screen when the number of robots is large.
 
 # Example
 
-
+## Workspace
+![](workspace.png)
 
 
