@@ -19,7 +19,6 @@ class Task(object):
         |   Boolean operators:       |
         |       !   (negation)       |
         |       ->  (implication)    |
-        |	    <-> (equivalence)    |
         |       &&  (and)            |
         |       ||  (or)             |
         |                            |
@@ -27,14 +26,21 @@ class Task(object):
         |       []  (always)         |
         |       <>  (eventually)     |
         |       U   (until)          |
-        |       V   (release)        |
-        |       X   (next)           |
         +----------------------------+
         """
         workspace = Workspace()
 
-        # task specification, e1-e5 are subfomulas
-        # Task 1 ----------------------------------------------------------
+        # task specification, e_i are subformulas
+        # --------------------------- Task 1 -------------------------------
+        self.formula = '<> e1 && <> e2  && <> e3 && <> e4 && <> e5 && <> e6'
+        self.subformula = {1: '(l1_1)',
+                           2: '(l2_1)',
+                           3: '(l3_1)',
+                           4: '(l4_1)',
+                           5: '(l5_1)',
+                           6: '(l6_1)'
+                           }
+        # --------------------------- Task 2 -------------------------------
         # self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
         # self.subformula = {1: '(l1_1)',
         #                    2: '(l2_1)',
@@ -42,16 +48,13 @@ class Task(object):
         #                    4: '(l4_1)',
         #                    5: '(l5_1)',
         #                    }
-
-        # Task 2 ------------------------------------------------------------
-        # task specification, e1-e5 are subfomulas
-        self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
-        self.subformula = {1: '(l1_1)',
-                           2: '(l6_1)',
-                           3: '(l5_2)'
-                        }
-
-        # Task 3 -------------------------------------------------------------
+        # --------------------------- Task 3 -------------------------------
+        # self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
+        # self.subformula = {1: '(l1_1)',
+        #                    2: '(l6_1)',
+        #                    3: '(l5_2)'
+        #                 }
+        # --------------------------- Task 4 -------------------------------
         # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6))'
         # self.subformula = {
         #     1: '(l1_1 && l1_2)',
@@ -60,8 +63,7 @@ class Task(object):
         #     4: '(l4_1)',
         #     5: '(l5_4)',
         #     6: '(l6_3)'}
-
-        # Task 4 -------------------------------------------------------------
+        # --------------------------- Task 5 -------------------------------
         # randomly generate tasks
         # num_of_robot_in_one_group = 8
         # group = np.array(range(1, self.number_of_robots + 1))
@@ -87,8 +89,8 @@ class Task(object):
         # print(self.subformula)
         # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
 
-        self.number_of_robots = 2   # num_of_robot_in_one_group * 8 for task 4
         # randomly generate initial locations of robots with empty atomic propositions
+        self.number_of_robots = 1   # self.number_of_robots = num_of_robot_in_one_group * 8 for task 5
         self.init = []
         self.init_label = []
         for i in range(self.number_of_robots):
@@ -98,7 +100,10 @@ class Task(object):
                 if 'o' not in ap:
                     break
             self.init.append(tuple(ini))
-            # label
+            # generate the label
             ap = ap + '_' + str(i + 1) if 'l' in ap else ''
             self.init_label.append(ap)
         self.init = tuple(self.init)
+
+        self.init = ((0.8, 0.1), )
+        self.init_label = ['']

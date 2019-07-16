@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 from workspace import get_label
+from termcolor import colored
 
 
 def workspace_plot(workspace, r_or_o, id_r_or_o, ax):
@@ -76,7 +77,7 @@ def path_print(path, workspace, number_of_robots):
     :return: printed path of traversed regions. points with empty label are depicted as dots
     """
     for n in range(number_of_robots):
-        print('robot {0}: '.format(n+1), end='')
+        print('robot {0:<2}: '.format(n+1), end='')
         # prefix path, a path of x's or y's of a robot
         x_pre = [point[0][n][0] for point in path[0]]
         y_pre = [point[0][n][1] for point in path[0]]
@@ -100,4 +101,4 @@ def path_print_helper(x, y, workspace):
         label = get_label((x[i], y[i]), workspace)
         label = ' .' if not label else label
         print(label + ' --> ', end='')
-    print('|| ', end='')
+    print(colored('|| ', 'yellow'), end='')

@@ -52,7 +52,7 @@ def construction_biased_tree(tree, n_max):
                 tree.rewire(q_new, near_nodes, obs_check)
 
         # first accepting state
-        if len(tree.goals) > 0: break
+        if len(tree.goals): break
 
     return tree.find_path(tree.goals)
 
