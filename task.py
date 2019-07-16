@@ -104,6 +104,3 @@ class Task(object):
             ap = ap + '_' + str(i + 1) if 'l' in ap else ''
             self.init_label.append(ap)
         self.init = tuple(self.init)
-
-        self.init = ((0.8, 0.1), )
-        self.init_label = ['']

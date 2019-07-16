@@ -15,7 +15,10 @@ def construction_biased_tree(tree, n_max):
     if tree.segment == 'suffix' and tree.check_transition_b(tree.init[1], tree.biased_tree.nodes[tree.init]['label'],
                                                             tree.init[1]):
         tree.goals.append(tree.init)
-        return {0: [0, []]}
+        if tree.buchi.buchi_graph.edges[(tree.init[1], tree.init[1])]['truth'] == '1':
+            return {0: [0, []]}
+        else:
+            return {0: [0, [tree.init]]}
 
     for n in range(n_max):
         # biased sample
