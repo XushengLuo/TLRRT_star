@@ -12,6 +12,17 @@ increases the scalability of our algorithm. To accelerate the construction of fe
 sampling process which is guided by transitions in the Buchi automaton that belong to the shortest path to the accepting
 states.
 
+# Requirements
+* [Python >=3.6](https://www.python.org/downloads/)
+* [sympy](https://www.sympy.org/en/index.html)
+* [re]()
+* [Pyvisgraph](https://github.com/TaipanRex/pyvisgraph)
+* [NetworkX](https://networkx.github.io)
+* [Shapely](https://github.com/Toblerity/Shapely)
+* [scipy](https://www.scipy.org)
+* [matplotlib](https://matplotlib.org)
+* [termcolor](https://pypi.org/project/termcolor/)
+
 # Usage
 
 First, specify the LTL task in the file [task.py](/task.py), which mainly involves the assigned task, the number of robots
