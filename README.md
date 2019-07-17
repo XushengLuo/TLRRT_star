@@ -47,18 +47,23 @@ The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions an
 For all the following test cases, the same set of parameters are used.
 ```python
 # parameters
+# maximum number of iterations
 n_max = 10000
 para = dict()
 # lite version, excluding extending and rewiring
 para['is_lite'] = True
 # step_size used in function near
 para['step_size'] = 0.25 * buchi.number_of_robots
-# probability
+# probability used when choosing node q_p_closest
 para['p_closest'] = 0.9
-# target point
+# probability used when deciding the target point 
 para['y_rand'] = 0.99
-# threshold for collision avoidance
-para['threshold'] = task.threshold
+# minimum distance between any pair of robots  
+para['threshold'] = 0.005
+```
+Furthermore, the construction of the tree terminates once an accepting node is detected, which is controlled in [construct_biased_tree.py](construct_biased_tree.py) by code 
+```python
+if len(tree.goals): break
 ```
 ### Case 1
 The task is specified by 
@@ -71,7 +76,6 @@ self.subformula = { 1: '(l1_1)',
                     5: '(l5_1)',
                     }     
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
-self.threshold = 0.005      # minimum distance between any pair of robots  
 ```
 The output result during the process is 
 ```
@@ -97,7 +101,6 @@ self.subformula = { 1: '(l1_1)',
                     3: '(l5_2)'
                     }
 self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
-self.threshold = 0.005                # minimum distance between any pair of robots                    
 ```
 The output result during the process is 
 ```
