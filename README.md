@@ -25,13 +25,13 @@ states.
 
 # Usage
 ## Structures
-* class [Task](task.py) defines the task specified in LTL
-* class [Workspace](workspace.py) define the workspace where robots reside
-* class [Buchi](buchi_parse.py) constructs the graph of NBA from LTL formula
-* class [BiasedTree](biased_tree.py) involves the initialization of the tree and relevant operations
-* function [construction_biased_tree](construct_biased_tree.py) incrementally grow the tree
-* script [biased_TLRRT_star.py](biased_TLRRT_star.py) contains the main function
-* functions [path_plot](draw_picture.py) and [path_print](draw_picture.py) draw and print the paths, respectively
+* Class [Task](task.py) defines the task specified in LTL
+* Class [Workspace](workspace.py) define the workspace where robots reside
+* Class [Buchi](buchi_parse.py) constructs the graph of NBA from LTL formula
+* Class [BiasedTree](biased_tree.py) involves the initialization of the tree and relevant operations
+* Function [construction_biased_tree](construct_biased_tree.py) incrementally grow the tree
+* Script [biased_TLRRT_star.py](biased_TLRRT_star.py) contains the main function
+* Functions [path_plot](draw_picture.py) and [path_print](draw_picture.py) draw and print the paths, respectively
 ## Basic procedure
 * First, specify the LTL task in the file [task.py](task.py), which mainly involves the assigned task, the number of robots
 , the initial locations of robots and the minimum distance between any pair of robots, and workspace in the file [workspace.py](/workspace.py) that contains the information 
