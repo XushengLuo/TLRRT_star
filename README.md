@@ -1,4 +1,4 @@
-# TLRRT*
+# TL-RRT*
 
 An Abstraction-Free Method for Multi-Robot Temporal Logic Optimal Control Synthesis
 
@@ -35,8 +35,8 @@ states.
 ## Basic procedure
 * First, specify the LTL task in the class [Task](task.py), which mainly involves the assigned task, the number of robots
 , the initial locations of robots and the minimum distance between any pair of robots, and workspace in the class [Workspace](/workspace.py) that contains the information about the size of the workspace, the layout of regions and obstacles. 
-* Second, set the parameters used in the TLRRT* in the script [construct_biased_tree.py](/construct_biased_tree.py), such as the maximum number of iterations, the step size, whether the lite version in [biased_tree.py](/biased_tree.py) is used that does not use functions `near`, `extend` and `rewire`. 
-* Finally, after the TLRRT* terminates, the runtime and the cost of the solution are presented. What's more, the path composed of prefix and suffix parts for each robot is drawn with workspace layout when the number of robots is relatively small, otherwise, the path for each robot is printed onto the screen when the number of robots is large. 
+* Second, set the parameters used in the TL-RRT* in the script [construct_biased_tree.py](/construct_biased_tree.py), such as the maximum number of iterations, the step size, whether the lite version in [biased_tree.py](/biased_tree.py) is used that does not use functions `near`, `extend` and `rewire`. 
+* Finally, after the TL-RRT* terminates, the runtime and the cost of the solution are presented. What's more, the path composed of prefix and suffix parts for each robot is drawn with workspace layout when the number of robots is relatively small, otherwise, the path for each robot is printed onto the screen when the number of robots is large. 
 
 # Example
 
