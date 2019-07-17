@@ -56,19 +56,19 @@ self.threshold = 0.005      # minimum distance between any pair of robots
 ```
 The output result during the process is 
 ```
-Time for constructing the NBA: 0.1116 s
+Time for constructing the NBA: 0.1343 s
 ------------------------------ prefix path --------------------------------
-Time for the prefix path: 0.1522 s
+Time for the prefix path: 0.0516 s
 1 accepting goals found
 -------------- suffix path for 1-th pre-goal (of 1 in total) --------------
-0-th pre-goals: 1 accepting goals found
-Time for the suffix path: 0.0918 s
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0561 s
 ------------------------ prefix + suffix path -----------------------------
 t_pre  | t_suf  | t_total | cost
-0.1522 | 0.0918 | 0.3556  | 1.9895
+0.0516 | 0.0561 | 0.2421  | 1.7245
 ------------------------- print the path path -----------------------------
 (. for empty label, || ... || for the suffix path)
-robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l1 -->  . -->  . -->  . -->  . -->  . -->  . --> l2 -->  . --> l4 --> l4 --> || l4 -->  . -->  . --> l3 -->  . --> l2 --> l2 -->  . -->  . --> l4 --> || 
+robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l4 --> l1 -->  . -->  . --> l2 --> l2 --> || l2 --> l3 --> l3 -->  . --> l2 --> l2 --> l2 --> || 
 ```
 ## Case 2
 ```python
@@ -82,20 +82,20 @@ self.threshold = 0.005                # minimum distance between any pair of rob
 ```
 The output result during the process is 
 ```
-Time for constructing the NBA: 0.0343 s
+Time for constructing the NBA: 0.0225 s
 ------------------------------ prefix path --------------------------------
-Time for the prefix path: 0.0924 s
+Time for the prefix path: 0.1162 s
 1 accepting goals found
 -------------- suffix path for 1-th pre-goal (of 1 in total) --------------
-0-th pre-goals: 1 accepting goals found
-Time for the suffix path: 0.0271 s
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0273 s
 ------------------------ prefix + suffix path -----------------------------
 t_pre  | t_suf  | t_total | cost
-0.0924 | 0.0271 | 0.1538  | 0.6420
+0.1162 | 0.0273 | 0.1660  | 0.8407
 ------------------------- print the path path -----------------------------
 (. for empty label, || ... || for the suffix path)
-robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l6 --> l6 -->  . --> l1 --> l1 --> || l1 --> || 
-robot 2 : l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> || l5 --> ||
+robot 1 :  . -->  . -->  . --> l4 --> l6 -->  . -->  . -->  . --> l1 --> l1 --> || l1 --> || 
+robot 2 :  . -->  . -->  . -->  . -->  . -->  . -->  . -->  . --> l5 --> l5 --> || l5 --> ||
 ```
 ## Case 3
 ```python
