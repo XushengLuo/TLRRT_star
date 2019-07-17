@@ -128,7 +128,7 @@ where each subformula is randomly generated, so is the initial location of each 
 if ' && ' in symbol: continue
 ```
 
-The output result during execution is as follows. We didn't present the path due to large nuumber of robots
+The output result for `num_of_robot_in_one_group = 3` is as follows. We didn't present the path due to large nuumber of robots
 ```
 Time for constructing the NBA: 1.8233 s
 ------------------------------ prefix path --------------------------------
