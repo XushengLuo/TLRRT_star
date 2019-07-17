@@ -56,20 +56,19 @@ self.threshold = 0.005      # minimum distance between any pair of robots
 ```
 The output result during the process is 
 ```
-Time for constructing the NBA: 0.1324 s
+Time for constructing the NBA: 0.1116 s
 ------------------------------ prefix path --------------------------------
-Time for the prefix path: 0.1253 s
+Time for the prefix path: 0.1522 s
 1 accepting goals found
 -------------- suffix path for 1-th pre-goal (of 1 in total) --------------
 0-th pre-goals: 1 accepting goals found
-Time for the suffix path: 0.0809 s
+Time for the suffix path: 0.0918 s
 ------------------------ prefix + suffix path -----------------------------
 t_pre  | t_suf  | t_total | cost
-0.1253 | 0.0809 | 0.3385  | 2.3579
+0.1522 | 0.0918 | 0.3556  | 1.9895
 ------------------------- print the path path -----------------------------
 (. for empty label, || ... || for the suffix path)
-robot 1 :  . -->  . -->  . -->  . --> l1 -->  . --> l1 -->  . -->  . -->  . -->  . --> l2 -->  . -->  . -->  . --> l4 --> l4 --> || l4 -->  . --> l3 -->  . -->  . --> l2 --> l2 -->  . -->  . --> l4 --> || 
-
+robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l1 -->  . -->  . -->  . -->  . -->  . -->  . --> l2 -->  . --> l4 --> l4 --> || l4 -->  . -->  . --> l3 -->  . --> l2 --> l2 -->  . -->  . --> l4 --> || 
 ```
 ## Case 2
 ```python
