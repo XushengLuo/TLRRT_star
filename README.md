@@ -37,8 +37,9 @@ robot is printed onto the screen when the number of robots is large.
 
 ## Workspace
 The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions and `o_1`-`o_2` being obstacles
-![](workspace.png)
-<img src="workspace.png"  width="600" height="400">
+<p align="center">
+<img src="workspace.png"  width="750" height="500">
+</p>
 
 ## Case 1
 The task is specified by 
