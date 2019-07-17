@@ -25,11 +25,13 @@ states.
 
 # Usage
 
-First, specify the LTL task in the file [task.py](/task.py), which mainly involves the assigned task, the number of robots
+* First, specify the LTL task in the file [task.py](/task.py), which mainly involves the assigned task, the number of robots
 , the initial locations of robots and the minimum distance between any pair of robots, and workspace in the file [workspace.py](/workspace.py) that contains the information 
-about the size of the workspace, the layout of regions and obstacles. Second, set the parameters used in the TLRRT* in the
+about the size of the workspace, the layout of regions and obstacles. 
+* Second, set the parameters used in the TLRRT* in the
 file [construct_biased_tree.py](/construct_biased_tree.py), such as the maximum number of iterations, the step size, whether the lite version that does not use function `near`, `extend` and `rewire` in 
-[biased_tree.py](/biased_tree.py) is used. Finally, after the TLRRT* terminates, the runtime and the cost of the solution is 
+[biased_tree.py](/biased_tree.py) is used. 
+* Finally, after the TLRRT* terminates, the runtime and the cost of the solution is 
 presented. What's more, the path composed of prefix and suffix parts for each robot is drawn with workspace layout when the number of robots is relatively small, otherwise, the path for each
 robot is printed onto the screen when the number of robots is large. 
 
@@ -41,8 +43,30 @@ The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions an
 <img src="workspace.png"  width="750" height="500">
 </p>
 
-## Case 1
-The task is specified by 
+## Test Cases
+For all the following test cases, the same set of parameters are used.
+```python
+# parameters
+# maximum number of iterations
+n_max = 10000
+para = dict()
+# lite version, excluding extending and rewiring
+para['is_lite'] = True
+# step_size used in function near
+para['step_size'] = 0.25 * buchi.number_of_robots
+# probability used when choosing node q_p_closest
+para['p_closest'] = 0.9
+# probability used when deciding the target point 
+para['y_rand'] = 0.99
+# minimum distance between any pair of robots  
+para['threshold'] = 0.005
+```
+Furthermore, the construction of the tree terminates once an accepting node is detected, which is controlled in [construct_biased_tree.py](construct_biased_tree.py) by line
+```python
+if len(tree.goals): break
+```
+### Case 1
+The task involving one robot is specified by 
 ```python
 self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
 self.subformula = { 1: '(l1_1)',
@@ -52,26 +76,25 @@ self.subformula = { 1: '(l1_1)',
                     5: '(l5_1)',
                     }     
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
-self.threshold = 0.005      # minimum distance between any pair of robots  
 ```
-The result regarding 
-```python
-Time for constructing the NBA: 0.1324 s
+The output result during execution is 
+```
+Time for constructing the NBA: 0.1343 s
 ------------------------------ prefix path --------------------------------
-Time for the prefix path: 0.1253 s
+Time for the prefix path: 0.0516 s
 1 accepting goals found
 -------------- suffix path for 1-th pre-goal (of 1 in total) --------------
-0-th pre-goals: 1 accepting goals found
-Time for the suffix path: 0.0809 s
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0561 s
 ------------------------ prefix + suffix path -----------------------------
 t_pre  | t_suf  | t_total | cost
-0.1253 | 0.0809 | 0.3385  | 2.3579
+0.0516 | 0.0561 | 0.2421  | 1.7245
 ------------------------- print the path path -----------------------------
 (. for empty label, || ... || for the suffix path)
-robot 1 :  . -->  . -->  . -->  . --> l1 -->  . --> l1 -->  . -->  . -->  . -->  . --> l2 -->  . -->  . -->  . --> l4 --> l4 --> || l4 -->  . --> l3 -->  . -->  . --> l2 --> l2 -->  . -->  . --> l4 --> || 
-
+robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l4 --> l1 -->  . -->  . --> l2 --> l2 --> || l2 --> l3 --> l3 -->  . --> l2 --> l2 --> l2 --> || 
 ```
-## Case 2
+### Case 2
+The task involving two robots is specified by 
 ```python
 self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
 self.subformula = { 1: '(l1_1)',
@@ -79,14 +102,45 @@ self.subformula = { 1: '(l1_1)',
                     3: '(l5_2)'
                     }
 self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
-self.threshold = 0.005                # minimum distance between any pair of robots                    
 ```
-## Case 3
+The output result during execution is 
+```
+Time for constructing the NBA: 0.0225 s
+------------------------------ prefix path --------------------------------
+Time for the prefix path: 0.1162 s
+1 accepting goals found
+-------------- suffix path for 1-th pre-goal (of 1 in total) --------------
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0273 s
+------------------------ prefix + suffix path -----------------------------
+t_pre  | t_suf  | t_total | cost
+0.1162 | 0.0273 | 0.1660  | 0.8407
+------------------------- print the path path -----------------------------
+(. for empty label, || ... || for the suffix path)
+robot 1 :  . -->  . -->  . --> l4 --> l6 -->  . -->  . -->  . --> l1 --> l1 --> || l1 --> || 
+robot 2 :  . -->  . -->  . -->  . -->  . -->  . -->  . -->  . --> l5 --> l5 --> || l5 --> ||
+```
+### Case 3
+The task involving `8*num_of_robot_in_one_group` robots is specified by 
 ```python
 self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
 ```
 where each subformula is randomly generated, so is the initial location of each robot. It took less time when the following code in [buchi_parse.py](buchi_parse.py) is uncommented.
 ```python
 if ' && ' in symbol: continue
+```
+
+The output result for `num_of_robot_in_one_group = 3` is as follows. We didn't present the path due to large nuumber of robots
+```
+Time for constructing the NBA: 1.8233 s
+------------------------------ prefix path --------------------------------
+Time for the prefix path: 2.9102 s
+1 accepting goals found
+-------------- suffix path for 1-th pre-goal (of 1 in total) --------------
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 2.4176 s
+------------------------ prefix + suffix path -----------------------------
+t_pre  | t_suf  | t_total | cost
+2.9102 | 2.4176 | 7.1510  | 7.9073
 ```
 

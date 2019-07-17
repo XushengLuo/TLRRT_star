@@ -29,17 +29,17 @@ print('Time for constructing the NBA: {0:.4f} s'.format(NBA_time))
 workspace = Workspace()
 
 # parameters
-n_max = 40000
+n_max = 10000
 para = dict()
 # lite version, excluding extending and rewiring
 para['is_lite'] = True
 # step_size used in function near
 para['step_size'] = 0.25 * buchi.number_of_robots
-# probability
+# probability of choosing node q_p_closest
 para['p_closest'] = 0.9
-# target point
+# probability used when deciding the target point
 para['y_rand'] = 0.99
-# threshold for collision avoidance
+# minimum distance between any pair of robots
 para['threshold'] = task.threshold
 
 cost_path = OrderedDict()
@@ -93,7 +93,7 @@ for b_init in buchi_graph.graph['init']:
 
         print('-------------- suffix path for {0}-th pre-goal (of {1} in total) --------------'.format(i+1,
                                                                                                    len(tree_pre.goals)))
-        print('{0}-th pre-goals: {1} accepting goals found'.format(i, len(tree_suf.goals)))
+        print('{0}-th pre-goals: {1} accepting goals found'.format(i+1, len(tree_suf.goals)))
 
         # couldn't find the path within predtermined number of iterations
         if not cost_path_suf_cand:

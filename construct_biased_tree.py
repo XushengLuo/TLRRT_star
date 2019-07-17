@@ -54,7 +54,7 @@ def construction_biased_tree(tree, n_max):
             if not tree.lite and added:
                 tree.rewire(q_new, near_nodes, obs_check)
 
-        # first accepting state
+        # detect the first accepting state
         if len(tree.goals): break
 
     return tree.find_path(tree.goals)
