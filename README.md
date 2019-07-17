@@ -33,15 +33,10 @@ states.
 * Script [biased_TLRRT_star.py](biased_TLRRT_star.py) contains the main function
 * Functions [path_plot](draw_picture.py) and [path_print](draw_picture.py) draw and print the paths, respectively
 ## Basic procedure
-* First, specify the LTL task in the file [task.py](task.py), which mainly involves the assigned task, the number of robots
-, the initial locations of robots and the minimum distance between any pair of robots, and workspace in the file [workspace.py](/workspace.py) that contains the information 
-about the size of the workspace, the layout of regions and obstacles. 
-* Second, set the parameters used in the TLRRT* in the
-file [construct_biased_tree.py](/construct_biased_tree.py), such as the maximum number of iterations, the step size, whether the lite version that does not use function `near`, `extend` and `rewire` in 
-[biased_tree.py](/biased_tree.py) is used. 
-* Finally, after the TLRRT* terminates, the runtime and the cost of the solution is 
-presented. What's more, the path composed of prefix and suffix parts for each robot is drawn with workspace layout when the number of robots is relatively small, otherwise, the path for each
-robot is printed onto the screen when the number of robots is large. 
+* First, specify the LTL task in the class [Task](task.py), which mainly involves the assigned task, the number of robots
+, the initial locations of robots and the minimum distance between any pair of robots, and workspace in the class [Workspace](/workspace.py) that contains the information about the size of the workspace, the layout of regions and obstacles. 
+* Second, set the parameters used in the TLRRT* in the script [construct_biased_tree.py](/construct_biased_tree.py), such as the maximum number of iterations, the step size, whether the lite version in [biased_tree.py](/biased_tree.py) is used that does not use functions `near`, `extend` and `rewire`. 
+* Finally, after the TLRRT* terminates, the runtime and the cost of the solution are presented. What's more, the path composed of prefix and suffix parts for each robot is drawn with workspace layout when the number of robots is relatively small, otherwise, the path for each robot is printed onto the screen when the number of robots is large. 
 
 # Example
 
@@ -85,7 +80,7 @@ self.subformula = { 1: '(l1_1)',
                     }     
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
 ```
-The output result during execution is 
+The output results during execution are
 ```
 Time for constructing the NBA: 0.1343 s
 ------------------------------ prefix path --------------------------------
@@ -111,7 +106,7 @@ self.subformula = { 1: '(l1_1)',
                     }
 self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
 ```
-The output result during execution is 
+The output results during execution are
 ```
 Time for constructing the NBA: 0.0225 s
 ------------------------------ prefix path --------------------------------
@@ -138,7 +133,7 @@ where each subformula is randomly generated, so is the initial location of each 
 if ' && ' in symbol: continue
 ```
 
-The output result for `num_of_robot_in_one_group = 3` is as follows. We didn't present the path due to large nuumber of robots.
+The output results for `num_of_robot_in_one_group = 3` are as follows. We didn't present the path due to large nuumber of robots.
 ```
 Time for constructing the NBA: 1.8233 s
 ------------------------------ prefix path --------------------------------
