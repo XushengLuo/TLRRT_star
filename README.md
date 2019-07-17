@@ -55,7 +55,7 @@ self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)
 self.threshold = 0.005      # minimum distance between any pair of robots  
 ```
 The result regarding 
-```python
+```
 Time for constructing the NBA: 0.1324 s
 ------------------------------ prefix path --------------------------------
 Time for the prefix path: 0.1253 s
