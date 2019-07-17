@@ -31,7 +31,7 @@ class Task(object):
         workspace = Workspace()
 
         # task specification, e_i are subformulas, li_j means the j-th robot is at regions l_i
-        # --------------------------- Task 1 -------------------------------
+        # --------------------------------- Task 1 -------------------------------------
         self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
         self.subformula = {1: '(l1_1)',
                            2: '(l2_1)',
@@ -39,14 +39,14 @@ class Task(object):
                            4: '(l4_1)',
                            5: '(l5_1)',
                            }
-        # --------------------------- Task 2 -------------------------------
+        # --------------------------------- Task 2 -------------------------------------
         # self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
         # self.subformula = {1: '(l1_1)',
         #                    2: '(l6_1)',
         #                    3: '(l5_2)'
         #                 }
 
-        # --------------------------- Task 3 -------------------------------
+        # --------------------------------- Task 3 -------------------------------------
         # randomly generate tasks
         # num_of_robot_in_one_group = 3
         # group = np.array(range(1, self.number_of_robots + 1))
@@ -69,7 +69,7 @@ class Task(object):
         #     formula.append('(' + ' && '.join(subformula) + ')')
 
         # self.subformula = {i: formula[i-1] for i in range(1, 9)}
-        # --------------------------- Task 4 -------------------------------
+        # --------------------------------- Task 4 -------------------------------------
         # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6))'
         # self.subformula = {
         #     1: '(l1_1 && l1_2)',
@@ -82,8 +82,8 @@ class Task(object):
         # randomly generate initial locations of robots with empty atomic propositions
         # self.number_of_robots = num_of_robot_in_one_group * 8  # for task 3
         self.number_of_robots = 1
-        self.init = []
-        self.init_label = []
+        self.init = []  # initial locations
+        self.init_label = []  # labels of initial locations
         for i in range(self.number_of_robots):
             while True:
                 ini = [round(uniform(0, workspace.workspace[k]), 3) for k in range(len(workspace.workspace))]
@@ -91,7 +91,6 @@ class Task(object):
                 if 'o' not in ap:
                     break
             self.init.append(tuple(ini))
-            # generate the label
             ap = ap + '_' + str(i + 1) if 'l' in ap else ''
             self.init_label.append(ap)
         self.init = tuple(self.init)          # in the form of ((x, y), (x, y), ...)
