@@ -66,7 +66,7 @@ Furthermore, the construction of the tree terminates once an accepting node is d
 if len(tree.goals): break
 ```
 ### Case 1
-The task is specified by 
+The task involving one robot is specified by 
 ```python
 self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
 self.subformula = { 1: '(l1_1)',
@@ -93,7 +93,8 @@ t_pre  | t_suf  | t_total | cost
 (. for empty label, || ... || for the suffix path)
 robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l4 --> l1 -->  . -->  . --> l2 --> l2 --> || l2 --> l3 --> l3 -->  . --> l2 --> l2 --> l2 --> || 
 ```
-## Case 2
+### Case 2
+The task involving two robots is specified by 
 ```python
 self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
 self.subformula = { 1: '(l1_1)',
@@ -119,7 +120,8 @@ t_pre  | t_suf  | t_total | cost
 robot 1 :  . -->  . -->  . --> l4 --> l6 -->  . -->  . -->  . --> l1 --> l1 --> || l1 --> || 
 robot 2 :  . -->  . -->  . -->  . -->  . -->  . -->  . -->  . --> l5 --> l5 --> || l5 --> ||
 ```
-## Case 3
+### Case 3
+The task involving `8*num_of_robot_in_one_group` robots is specified by 
 ```python
 self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
 ```
