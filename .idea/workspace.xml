@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="272c97b5-a133-4d1e-9706-7500205bd2ec" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/path0.png" afterPath="$PROJECT_DIR$/path0.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/path1.png" afterPath="$PROJECT_DIR$/path1.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/biased_TLRRT_star.py" afterPath="$PROJECT_DIR$/biased_TLRRT_star.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/buchi_parse.py" afterPath="$PROJECT_DIR$/buchi_parse.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/construct_biased_tree.py" afterPath="$PROJECT_DIR$/construct_biased_tree.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/task.py" afterPath="$PROJECT_DIR$/task.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/output/visualizations/rrt_star_bid_h_2d.html" afterPath="" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -103,8 +97,8 @@
       <file leaf-file-name="biased_TLRRT_star.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/biased_TLRRT_star.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="130" column="20" lean-forward="true" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
+            <state relative-caret-position="314">
+              <caret line="140" column="0" lean-forward="true" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
               <folding>
                 <element signature="e#25#46#0" expanded="true" />
               </folding>
@@ -359,9 +353,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1280" height="800" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2536349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2536349" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32954547" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32102272" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -745,8 +738,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/biased_TLRRT_star.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="130" column="20" lean-forward="true" selection-start-line="130" selection-start-column="20" selection-end-line="130" selection-end-column="20" />
+        <state relative-caret-position="314">
+          <caret line="140" column="0" lean-forward="true" selection-start-line="140" selection-start-column="0" selection-end-line="140" selection-end-column="0" />
           <folding>
             <element signature="e#25#46#0" expanded="true" />
           </folding>
