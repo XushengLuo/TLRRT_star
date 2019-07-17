@@ -61,7 +61,7 @@ para['y_rand'] = 0.99
 # minimum distance between any pair of robots  
 para['threshold'] = 0.005
 ```
-Furthermore, the construction of the tree terminates once an accepting node is detected, which is controlled in [construct_biased_tree.py](construct_biased_tree.py) by code 
+Furthermore, the construction of the tree terminates once an accepting node is detected, which is controlled in [construct_biased_tree.py](construct_biased_tree.py) by line
 ```python
 if len(tree.goals): break
 ```
