@@ -43,7 +43,7 @@ The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions an
 <img src="workspace.png"  width="750" height="500">
 </p>
 
-## Test Case
+## Test Cases
 For all the following test cases, the same set of parameters are used.
 ```python
 # parameters
