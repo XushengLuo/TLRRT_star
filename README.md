@@ -43,7 +43,24 @@ The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions an
 <img src="workspace.png"  width="750" height="500">
 </p>
 
-## Case 1
+## Test Case
+For all the following test cases, the same set of parameters are used.
+```python
+# parameters
+n_max = 10000
+para = dict()
+# lite version, excluding extending and rewiring
+para['is_lite'] = True
+# step_size used in function near
+para['step_size'] = 0.25 * buchi.number_of_robots
+# probability
+para['p_closest'] = 0.9
+# target point
+para['y_rand'] = 0.99
+# threshold for collision avoidance
+para['threshold'] = task.threshold
+```
+### Case 1
 The task is specified by 
 ```python
 self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
