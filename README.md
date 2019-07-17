@@ -4,12 +4,12 @@ An Abstraction-Free Method for Multi-Robot Temporal Logic Optimal Control Synthe
 
 Tasks specified by Linear Temporal Logic can capture more complex missions compared to traditional point-to-point navigation.
 The majority of existing Linear Temporal Logic (LTL) planning methods rely on the construction of a discrete product 
-automaton, that combines a discrete abstraction of robot mobility and a Bu ̈chi automaton that captures the LTL specification
+automaton, that combines a discrete abstraction of robot mobility and a Büchi automaton that captures the LTL specification
 We propose a new sampling-based LTL planning algorithm that does not require any discrete abstraction of robot mobility.
 Instead, it builds incrementally trees that explore the product state-space, until a maximum number of iterations is
 reached or a feasible plan is found. The use of trees makes data storing and manipulation tractable, which significantly
 increases the scalability of our algorithm. To accelerate the construction of feasible plans, we introduce bias in the
-sampling process which is guided by transitions in the Buchi automaton that belong to the shortest path to the accepting
+sampling process which is guided by transitions in the Büchi automaton that belong to the shortest path to the accepting
 states.
 
 # Requirements
