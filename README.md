@@ -38,8 +38,10 @@ robot is printed onto the screen when the number of robots is large.
 ## Workspace
 The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions and `o_1`-`o_2` being obstacles
 ![](workspace.png)
+<img src="workspace.png"  width="600" height="600">
 
 ## Case 1
+The task is specified by 
 ```python
 self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
 self.subformula = { 1: '(l1_1)',

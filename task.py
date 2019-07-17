@@ -30,7 +30,7 @@ class Task(object):
         """
         workspace = Workspace()
 
-        # task specification, e_i are subformulas
+        # task specification, e_i are subformulas, li_j means the j-th robot is at regions l_i
         # --------------------------- Task 1 -------------------------------
         self.formula = '<> e1 && <> e2  && <> e3 && <> e4 && <> e5 && <> e6'
         self.subformula = {1: '(l1_1)',
