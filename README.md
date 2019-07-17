@@ -77,7 +77,7 @@ self.subformula = { 1: '(l1_1)',
                     }     
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
 ```
-The output result during the process is 
+The output result during execution is 
 ```
 Time for constructing the NBA: 0.1343 s
 ------------------------------ prefix path --------------------------------
@@ -102,7 +102,7 @@ self.subformula = { 1: '(l1_1)',
                     }
 self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
 ```
-The output result during the process is 
+The output result during execution is 
 ```
 Time for constructing the NBA: 0.0225 s
 ------------------------------ prefix path --------------------------------
@@ -126,5 +126,19 @@ self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && 
 where each subformula is randomly generated, so is the initial location of each robot. It took less time when the following code in [buchi_parse.py](buchi_parse.py) is uncommented.
 ```python
 if ' && ' in symbol: continue
+```
+
+The output result during execution is as follows. We didn't present the path due to large nuumber of robots
+```
+Time for constructing the NBA: 1.8233 s
+------------------------------ prefix path --------------------------------
+Time for the prefix path: 2.9102 s
+1 accepting goals found
+-------------- suffix path for 1-th pre-goal (of 1 in total) --------------
+1-th pre-goals: 1 accepting goals found
+Time for the suffix path: 2.4176 s
+------------------------ prefix + suffix path -----------------------------
+t_pre  | t_suf  | t_total | cost
+2.9102 | 2.4176 | 7.1510  | 7.9073
 ```
 
