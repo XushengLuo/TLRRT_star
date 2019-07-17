@@ -103,5 +103,5 @@ class Task(object):
             # generate the label
             ap = ap + '_' + str(i + 1) if 'l' in ap else ''
             self.init_label.append(ap)
-        self.init = tuple(self.init)
-        self.threshold = 0.005
+        self.init = tuple(self.init)          # in the form of ((x, y), (x, y), ...)
+        self.threshold = 0.005                # minimum distance between any pair of robots

@@ -50,7 +50,9 @@ self.subformula = { 1: '(l1_1)',
                     3: '(l3_1)',
                     4: '(l4_1)',
                     5: '(l5_1)',
-                    }                     
+                    }     
+self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
+self.threshold = 0.005      # minimum distance between any pair of robots            
 ```
 ## Case 2
 ```python
@@ -59,6 +61,8 @@ self.subformula = { 1: '(l1_1)',
                     2: '(l6_1)',
                     3: '(l5_2)'
                     }
+self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
+self.threshold = 0.005                # minimum distance between any pair of robots                    
 ```
 ## Case 3
 ```python
