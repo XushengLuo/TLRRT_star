@@ -54,7 +54,7 @@ self.subformula = { 1: '(l1_1)',
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
 self.threshold = 0.005      # minimum distance between any pair of robots  
 ```
-The result regarding 
+The output result during the process is 
 ```
 Time for constructing the NBA: 0.1324 s
 ------------------------------ prefix path --------------------------------
@@ -80,6 +80,23 @@ self.subformula = { 1: '(l1_1)',
                     }
 self.init = ((0.8, 0.1), (0.8, 0.1))  # in the form of ((x,y), (x,y), ...)    
 self.threshold = 0.005                # minimum distance between any pair of robots                    
+```
+The output result during the process is 
+```
+Time for constructing the NBA: 0.0343 s
+------------------------------ prefix path --------------------------------
+Time for the prefix path: 0.0924 s
+1 accepting goals found
+-------------- suffix path for 1-th pre-goal (of 1 in total) --------------
+0-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0271 s
+------------------------ prefix + suffix path -----------------------------
+t_pre  | t_suf  | t_total | cost
+0.0924 | 0.0271 | 0.1538  | 0.6420
+------------------------- print the path path -----------------------------
+(. for empty label, || ... || for the suffix path)
+robot 1 :  . -->  . -->  . -->  . -->  . -->  . -->  . --> l6 --> l6 -->  . --> l1 --> l1 --> || l1 --> || 
+robot 2 : l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> l5 --> || l5 --> ||
 ```
 ## Case 3
 ```python
