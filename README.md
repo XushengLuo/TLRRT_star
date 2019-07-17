@@ -40,7 +40,7 @@ robot is printed onto the screen when the number of robots is large.
 ## Workspace
 The workspace of size `1-by-1` is shown below, with `l_1`-`l_6` being regions and `o_1`-`o_2` being obstacles
 <p align="center">
-<img src="workspace.png"  width="750" height="500">
+<img src="img/workspace.png"  width="750" height="500">
 </p>
 
 ## Test Cases
@@ -130,7 +130,7 @@ where each subformula is randomly generated, so is the initial location of each 
 if ' && ' in symbol: continue
 ```
 
-The output result for `num_of_robot_in_one_group = 3` is as follows. We didn't present the path due to large nuumber of robots
+The output result for `num_of_robot_in_one_group = 3` is as follows. We didn't present the path due to large nuumber of robots.
 ```
 Time for constructing the NBA: 1.8233 s
 ------------------------------ prefix path --------------------------------

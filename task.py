@@ -32,19 +32,19 @@ class Task(object):
 
         # task specification, e_i are subformulas, li_j means the j-th robot is at regions l_i
         # --------------------------- Task 1 -------------------------------
-        # self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
-        # self.subformula = {1: '(l1_1)',
-        #                    2: '(l2_1)',
-        #                    3: '(l3_1)',
-        #                    4: '(l4_1)',
-        #                    5: '(l5_1)',
-        #                    }
-        # --------------------------- Task 2 -------------------------------
-        self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
+        self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
         self.subformula = {1: '(l1_1)',
-                           2: '(l6_1)',
-                           3: '(l5_2)'
-                        }
+                           2: '(l2_1)',
+                           3: '(l3_1)',
+                           4: '(l4_1)',
+                           5: '(l5_1)',
+                           }
+        # --------------------------- Task 2 -------------------------------
+        # self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
+        # self.subformula = {1: '(l1_1)',
+        #                    2: '(l6_1)',
+        #                    3: '(l5_2)'
+        #                 }
 
         # --------------------------- Task 3 -------------------------------
         # randomly generate tasks
@@ -81,7 +81,7 @@ class Task(object):
 
         # randomly generate initial locations of robots with empty atomic propositions
         # self.number_of_robots = num_of_robot_in_one_group * 8  # for task 3
-        self.number_of_robots = 2
+        self.number_of_robots = 1
         self.init = []
         self.init_label = []
         for i in range(self.number_of_robots):
