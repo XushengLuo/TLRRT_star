@@ -32,38 +32,21 @@ class Task(object):
 
         # task specification, e_i are subformulas, li_j means the j-th robot is at regions l_i
         # --------------------------- Task 1 -------------------------------
-        self.formula = '<> e1 && <> e2  && <> e3 && <> e4 && <> e5 && <> e6'
+        self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
         self.subformula = {1: '(l1_1)',
                            2: '(l2_1)',
                            3: '(l3_1)',
                            4: '(l4_1)',
                            5: '(l5_1)',
-                           6: '(l6_1)'
                            }
         # --------------------------- Task 2 -------------------------------
-        # self.formula = '<> e1 && []<> (e2 && <> e3) && (!e3 U e4) && []!e5'
-        # self.subformula = {1: '(l1_1)',
-        #                    2: '(l2_1)',
-        #                    3: '(l3_1)',
-        #                    4: '(l4_1)',
-        #                    5: '(l5_1)',
-        #                    }
-        # --------------------------- Task 3 -------------------------------
         # self.formula = '[]<> e1 && []<> e3 && !e1 U e2'
         # self.subformula = {1: '(l1_1)',
         #                    2: '(l6_1)',
         #                    3: '(l5_2)'
         #                 }
-        # --------------------------- Task 4 -------------------------------
-        # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6))'
-        # self.subformula = {
-        #     1: '(l1_1 && l1_2)',
-        #     2: '(l2_2 && l2_3)',
-        #     3: '(l3_3 && l3_4)',
-        #     4: '(l4_1)',
-        #     5: '(l5_4)',
-        #     6: '(l6_3)'}
-        # --------------------------- Task 5 -------------------------------
+
+        # --------------------------- Task 3 -------------------------------
         # randomly generate tasks
         # num_of_robot_in_one_group = 8
         # group = np.array(range(1, self.number_of_robots + 1))
@@ -86,8 +69,17 @@ class Task(object):
         #     formula.append('(' + ' && '.join(subformula) + ')')
         #
         # self.subformula = {i: formula[i-1] for i in range(1, 9)}
-        # print(self.subformula)
         # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
+
+        # --------------------------- Task 4 -------------------------------
+        # self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6))'
+        # self.subformula = {
+        #     1: '(l1_1 && l1_2)',
+        #     2: '(l2_2 && l2_3)',
+        #     3: '(l3_3 && l3_4)',
+        #     4: '(l4_1)',
+        #     5: '(l5_4)',
+        #     6: '(l6_3)'}
 
         # randomly generate initial locations of robots with empty atomic propositions
         self.number_of_robots = 1   # self.number_of_robots = num_of_robot_in_one_group * 8 for task 5

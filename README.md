@@ -52,7 +52,24 @@ self.subformula = { 1: '(l1_1)',
                     5: '(l5_1)',
                     }     
 self.init = ((0.8, 0.1), )  # in the form of ((x,y), (x,y), ...)    
-self.threshold = 0.005      # minimum distance between any pair of robots            
+self.threshold = 0.005      # minimum distance between any pair of robots  
+```
+The result regarding 
+```python
+Time for constructing the NBA: 0.1324 s
+------------------------------ prefix path --------------------------------
+Time for the prefix path: 0.1253 s
+1 accepting goals found
+-------------- suffix path for 1-th pre-goal (of 1 in total) --------------
+0-th pre-goals: 1 accepting goals found
+Time for the suffix path: 0.0809 s
+------------------------ prefix + suffix path -----------------------------
+t_pre  | t_suf  | t_total | cost
+0.1253 | 0.0809 | 0.3385  | 2.3579
+------------------------- print the path path -----------------------------
+(. for empty label, || ... || for the suffix path)
+robot 1 :  . -->  . -->  . -->  . --> l1 -->  . --> l1 -->  . -->  . -->  . -->  . --> l2 -->  . -->  . -->  . --> l4 --> l4 --> || l4 -->  . --> l3 -->  . -->  . --> l2 --> l2 -->  . -->  . --> l4 --> || 
+
 ```
 ## Case 2
 ```python
@@ -68,7 +85,7 @@ self.threshold = 0.005                # minimum distance between any pair of rob
 ```python
 self.formula = '[]<> e1 && []<> e2 && []<> e3 && []<>(e4 && <>(e5 && <> e6)) && <> e7 && []<>e8 && (!e7 U e8)'
 ```
-It presents high performance when the following code in [buchi_parse.py](buchi_parse.py) is uncommented.
+where each subformula is randomly generated, so is the initial location of each robot. It took less time when the following code in [buchi_parse.py](buchi_parse.py) is uncommented.
 ```python
 if ' && ' in symbol: continue
 ```
