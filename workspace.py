@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from shapely.geometry import Polygon, Point
+import sys
 
 
 def get_label(x, workspace):
@@ -31,7 +32,7 @@ class Workspace(object):
         self.width = 1
         self.workspace = (self.length, self.width)
         # define regions (eg, isosceles right triangle)
-        length_of_side = 0.2
+        length_of_side = 0.2  # float(sys.argv[1])
         # coordinates of the right angle point
         center = [(0.1, 0.7), (0.7, 0.7), (0.7, 0.3), (0.3, 0.3), (0, 0.1), (0, 0.4)]
         self.regions = {'l1': Polygon([(center[0][0], center[0][1]), (center[0][0] + length_of_side, center[0][1]),
@@ -50,5 +51,30 @@ class Workspace(object):
 
         # define obstacles (e.g., rectangle)
         self.obs = {'o1': Polygon([(0.3, 0.0), (0.7, 0.0), (0.7, 0.2), (0.3, 0.2)]),
-                    'o2': Polygon([(0.4, 0.7), (0.6, 0.7), (0.6, 1.0), (0.4, 1.0)])
+                    'o2': Polygon([(0.4, 0.7), (0.6, 0.7), (0.6, 1.0), (0.4, 1.0)]),
+                    # 'o3': Polygon([(0.55, 0.25), (0.65, 0.25), (0.65, 0.45), (0.55, 0.45)]),
+                    # 'o4': Polygon([(0.2, 0.5), (0.9, 0.5), (0.9, 0.6), (0.2, 0.6)]),
                     }
+
+
+        # define obstacles (e.g., rectangle)
+        # self.obs = {'o1': Polygon([(0.3, 0.0), (0.7, 0.0), (0.7, 0.2), (0.3, 0.2)]),
+        #             'o2': Polygon([(0.4, 0.7), (0.6, 0.7), (0.6, 1.0), (0.4, 1.0)]),
+        #             'o3': Polygon([(0.55, 0.25), (0.65, 0.25), (0.65, 0.45), (0.55, 0.45)]),
+        #             'o4': Polygon([(0.2, 0.5), (0.9, 0.5), (0.9, 0.6), (0.2, 0.6)]),
+        #             }
+        # center = [(0.95*20, 0.95*20)]
+        # self.regions = {'l1': Polygon([(center[0][0]/20, center[0][1]/20), ((center[0][0] + 1)/20, center[0][1]/20),
+        #                                ((center[0][0]+1)/20, (center[0][1] + 1)/20), (center[0][0]/20, (center[0][1] + 1)/20)])}
+        # self.obs = dict()
+        # # a = {'o1': (4, 4), 'o2': (14, 4), 'o3': (4, 14), 'o4': (14, 14)}
+        # # for k, v in a.items():
+        # #     self.obs[k] = Polygon([(v[0]/20, v[1]/20), ((v[0]+2)/20, v[1]/20),
+        # #                                              ((v[0]+2)/20, (v[1]+2)/20), (v[0]/20, (v[1]+2)/20)])
+        #
+        # self.obs['o1'] = Polygon([(0.45, 0.45), (0.55, 0.45), (0.55, 0.55), (0.45, 0.55)])
+        # self.obs['o1'] = Polygon([(10/20, 12/20), (12/20, 12/20), (12/20, 14/20), (10/20, 14/20)])
+        # self.obs['o2'] = Polygon([(7/20, 4/20), (9/20, 4/20), (9/20, 6/20), (7/20, 6/20)])
+        # self.obs['o3'] = Polygon([(0/20, 19.1/20), (17/20, 19.1/20), (17/20, 20/20), (0/20, 20/20)])
+        # self.obs['o4'] = Polygon([(8/20, 16/20), (9/20, 16/20), (9/20, 19/20), (8/20, 19/20)])
+        # self.obs['o5'] = Polygon([(0/20, 15/20), (17/20, 15/20), (17/20, 15.9/20), (0/20, 15.9/20)])

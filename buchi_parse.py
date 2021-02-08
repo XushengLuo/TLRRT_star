@@ -6,8 +6,11 @@ import re
 import networkx as nx
 import numpy as np
 from networkx.classes.digraph import DiGraph
-from sympy import satisfiable
+from sympy.logic.inference import satisfiable
+from sympy.logic.boolalg import to_dnf
 from itertools import combinations
+import requests
+from bs4 import BeautifulSoup
 
 
 class Buchi(object):
@@ -34,16 +37,38 @@ class Buchi(object):
         """
         parse the output of the program ltl2ba and build the buchi automaton
         """
-        # directory of the program ltl2ba
-        dirname = os.path.dirname(__file__)
-        # output of the program ltl2ba
-        output = subprocess.check_output(dirname + "/./ltl2ba -f \"" + self.formula + "\"", shell=True).decode(
-            "utf-8")
-        
-        # find all states/nodes in the buchi automaton
-        state_re = re.compile(r'\n(\w+):\n\t')
-        state_group = re.findall(state_re, output)
+        program = 'offline'
+        if program == 'offline':
+            # directory of the program ltl2ba
+            dirname = os.path.dirname(__file__)
+            # output of the program ltl2ba
+            output = subprocess.check_output(dirname + "/./ltl2ba -f \"" + self.formula + "\"", shell=True).decode(
+                "utf-8")
+            # find all states/nodes in the buchi automaton
+            states = r'\n(\w+):'
+            if_fi = r':\n\tif(.*?)fi'
 
+        elif program == 'online':
+            para = {
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                'formule': self.formula,
+                'convert': 'Convert',
+                'image': 'on',
+                'descr': 'on',
+                'flysimpl': 'on',
+                'latsimpl': 'on',
+                'sccsimpl': 'on',
+                'fjtofj': 'on'
+                }
+            html_doc = requests.post('http://www.lsv.fr/~gastin/ltl2ba/index.php', data=para)
+            # print(html_doc.text)
+            output = BeautifulSoup(html_doc.text, 'html.parser').tt.string
+            states = r'\n(\w+) :'
+            if_fi = r' :(.*?)fi'
+
+        # find all states/nodes in the buchi automaton
+        state_re = re.compile(states)
+        state_group = re.findall(state_re, output)
         # find initial and accepting states
         init = [s for s in state_group if 'init' in s]
         accept = [s for s in state_group if 'accept' in s]
@@ -58,12 +83,17 @@ class Buchi(object):
             # add node
             self.buchi_graph.add_node(state)
             # loop over all transitions starting from current state
-            state_if_fi = re.findall(state + r':\n\tif(.*?)fi', output, re.DOTALL)
+            state_if_fi = re.findall(state + if_fi, output, re.DOTALL)
             if state_if_fi:
                 relation_group = re.findall(r':: (\(.*?\)) -> goto (\w+)\n\t', state_if_fi[0])
                 for symbol, next_state in relation_group:
+                    sym = symbol
                     # delete edges with multiple subformulas
-                    # if ' && ' in symbol: continue
+                    num_pos = 0
+                    for sym in symbol.split(' && '):
+                        if '!' not in sym:
+                            num_pos += 1
+                    if num_pos >= 2: continue
                     # whether the edge is feasible in terms of atomic propositions
                     for k in order_key:
                         symbol = symbol.replace('e{0}'.format(k), self.subformula[k])
@@ -72,9 +102,9 @@ class Buchi(object):
                     # infeasible transition
                     if not truth_table: continue
                     # add edge
-                    self.buchi_graph.add_edge(state, next_state, truth=truth_table)
+                    self.buchi_graph.add_edge(state, next_state, truth=truth_table, symbol=sym)
             else:
-                state_skip = re.findall(state + r':\n\tskip\n', output, re.DOTALL)
+                state_skip = re.findall(state + r'(.*?)skip\n', output, re.DOTALL)
                 if state_skip:
                     self.buchi_graph.add_edge(state, state, truth='1')
 
@@ -90,25 +120,31 @@ class Buchi(object):
         # non-empty symbol
         else:
             exp = symbol.replace('||', '|').replace('&&', '&').replace('!', '~')
-            # add extra constraints: a single robot can reside in at most one region
-            robot_region = self.robot2region(exp)
-            for robot, region in robot_region.items():
-                mutual_execlusion = list(combinations(region, 2))
-                # single label in the symbol
-                if not mutual_execlusion: continue
-                for i in range(len(mutual_execlusion)):
-                    mutual_execlusion[i] = '(~(' + ' & '.join(list(mutual_execlusion[i])) + '))'
-                exp = exp + '&' + ' & '.join(mutual_execlusion)
-            # find one truth assignment that makes symbol true using function satisfiable
-            truth = satisfiable(exp, algorithm="dpll")
-            try:
+            exp_dnf = to_dnf(exp).__str__()
+            # loop over each clause
+            for clause in exp_dnf.split(' | '):
                 truth_table = dict()
-                for key, value in truth.items():
-                    truth_table[key.name] = value
-            except AttributeError:
-                return False
-            else:
-                return truth_table
+                clause = clause.strip('(').strip(')')
+                literals = clause.split(' & ')
+                # loop over each literal
+                for literal in literals:
+                    if '~' not in literal:
+                        truth_table[literal] = True
+                    else:
+                        truth_table[literal[1:]] = False
+                # whether exist a literal with positive and negative version
+                if len(literals) != len(truth_table):
+                    continue
+                else:
+                    # exist a robot with two positive literals
+                    true_key = [truth.split('_')[1] for truth in truth_table.keys() if truth_table[truth]]
+                    if len(true_key) != len(set(true_key)):
+                        continue
+                    else:
+                        # print(clause, truth_table)
+                        return truth_table
+            return dict()
+
 
     def get_minimal_length(self):
         """
@@ -153,6 +189,9 @@ class Buchi(object):
                 if self.min_length[(init, ac)] < np.inf and self.min_length[(ac, ac)] < np.inf:
                     self.buchi_graph.graph['accept'].append(ac)
                     break
+        if not self.buchi_graph.graph['accept']:
+            print('No feasible accepting states!!!!!!!!! ')
+            exit()
 
     def robot2region(self, symbol):
         """
