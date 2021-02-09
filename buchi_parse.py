@@ -37,7 +37,7 @@ class Buchi(object):
         """
         parse the output of the program ltl2ba and build the buchi automaton
         """
-        program = 'offline'
+        program = 'online'
         if program == 'offline':
             # directory of the program ltl2ba
             dirname = os.path.dirname(__file__)
